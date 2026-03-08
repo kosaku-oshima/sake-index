@@ -1,0 +1,38 @@
+/*ブラウザの標準CSSを打ち消すファイルを読み込む*/
+@import url('master.css');
+
+/*独自のCSSを記述*/
+.card-list{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+@media (max-width: 1200px){
+    .card-list{
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px){
+    .card-list{
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    nav{
+        padding: 20px;
+    }
+}
+
+.card-thumbnail{
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%;
+    background-color: #ddd;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}

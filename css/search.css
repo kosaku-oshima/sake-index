@@ -1,0 +1,6 @@
+/*ブラウザの標準CSSを打ち消すファイル、navと基本的な画面構成を読み込む*/
+@import url('master.css');
+
+/*独自のCSS*/
+@import url('register.css')
+

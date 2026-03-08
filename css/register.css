@@ -1,0 +1,106 @@
+/*ブラウザの標準CSSを打ち消すファイル、navと基本的な画面構成を読み込む*/
+@import url('master.css');
+
+/*独自のCSS*/
+container.h1{
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #2c3e50;
+    font-size: 1.8rem;
+}
+
+.form-group{
+    margin-bottom: 1.5rem;
+}
+
+input[type="text"],
+input[type="range"],
+input[type="date"],
+input[type="number"]{
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 100%;
+}
+
+label{
+    display: block;
+    font-weight: bold;
+    margin-bottom: .5rem;
+}
+
+button{
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 100%;
+    text-align: center;
+    margin-top: .5rem;
+}
+
+button:hover{
+    background-color: #2980b9;
+    transition: background-color .3s;
+}
+
+.required{
+    background-color: #f99;
+    padding: 2px 4px;
+    font-size: .8em;
+    border-radius: 2px;
+    margin-left: 4px;
+    color: #fff;
+}
+
+.rating{
+    border:0;
+    padding:0;
+    margin: 0;
+    align-items: center;
+    display:inline-flex;
+    flex-direction:row-reverse;
+    gap: .5em;
+  }
+  .rating input{ display:none; }      /* radioは見せない */
+  .rating label{
+    cursor:pointer;                   /* ★がクリックできる */
+    font-size:24px;
+    color:#e9e9ee;                    /* 未選択色 */
+    user-select:none;
+  }
+  .rating input:checked ~ label{      /* 選択されている星まで塗る */
+    color:#3a3f4a;
+  }
+  .rating label:hover,
+  .rating label:hover ~ label{        /* ホバー時プレビュー */
+    color:#3a3f4a;
+  }  
+
+.range-labels{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: .5em;
+    font-size: .8em;
+}
+
+@media (max-width: 768px){
+    body{
+        display: block;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+
+    .container{
+        width: 100%;
+        max-width: 100%;
+        padding: 15px;
+        margin: 0;
+        border-radius: 0;
+        box-sizing: border-box;
+    }
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>データ出力</title>
+
+        <link rel="stylesheet" href="css/export.css">
+    </head>
+    <body>
+        <nav>
+            <h1><a href="index.html" class="logo">Sake-index</a></h1>
+            <ul class="menu">
+                <li><a href="index.html">一覧</a></li>
+                <li><a href="search.html">検索</a></li>
+                <li><a href="register.html">追加</a></li>
+                <li><a href="export.html">データ出力</a></li>
+            </ul>
+        </nav>
+        <main>
+            <div class="container">
+                <a href="index.html">キャンセル</a>
+                <h1>データ出力</h1>
+                <p>現在保存されているデータをCSV形式でエクスポートします。</p>
+                <div>
+                    <button id="exportCsvBtn" type="button">CSVをエクスポート</button>
+                </div>
+                <p id="exportMessage" class="message"></p>
+            </div>
+        </main>
+        <script type="module" src="js/export.js"></script>
+    </body>
+</html>

@@ -1,0 +1,74 @@
+/*ブラウザの標準CSSを打ち消すファイルを読み込む*/
+@import url('destyle.css');
+
+/*独自のCSSを記述*/
+:root{
+    background-color: #f5f5f5;
+}
+
+main{
+    display: flex;
+    justify-content: center;   /* 横中央 */
+    align-items: flex-start;   /* 上寄せ */
+  }
+
+body{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.menu{
+    display: flex;
+    gap: 10px;
+}
+
+nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #fefdfa;
+}
+
+nav h1{
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+a:not(.logo):hover{
+    color: #646cff;
+    text-decoration: underline;
+}
+
+.container{
+    width: 100%;
+    max-width: 800px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 10px;
+    
+}
+
+.container h1{
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #2c3e50;
+    font-size: 1.8rem;
+}
+
+.radioOption input[type="radio"] {
+    appearance: auto;
+    -webkit-appearance: radio; /* Safari系保険 */
+    width: auto;
+    height: auto;
+    margin: 0 4px 0 0;
+  }
+
+  .radioOption {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
