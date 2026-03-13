@@ -23,12 +23,14 @@ function renderCard(entry) {
 
 　//抽出した1つのデータに応じてhtmlを生成し返す。escapeHtml()でタグになりうる文字は別の表現に置き換える。
   return `
-    <a class="card" href="detail.html?id=${encodeURIComponent(entry.id)}">
+  <div class="card">
+    <a href="detail.html?id=${encodeURIComponent(entry.id)}">
       <div class="card-title">${escapeHtml(entry.name)}</div>
       <div class="card-rating">${rating}</div>
       <div class="card-memo">${escapeHtml(entry.memo)}</div>
       <div class="card-tags">${tags}</div>
     </a>
+  </div>  
   `;
 }
 
