@@ -37,10 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("日本酒の名前は必須です。");
       return;
     }
-    if (!memo) {
-      alert("ひとことメモは必須です。");
-      return;
-    }
 
     const entry = {
       id: uuid(),
