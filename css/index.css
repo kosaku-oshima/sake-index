@@ -28,6 +28,10 @@
     }
 }
 
+.card-rating{
+    color: #ec9a3c;
+}
+
 .card-thumbnail{
     width: 100%;
     height: 0;

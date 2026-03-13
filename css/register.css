@@ -73,11 +73,11 @@ button:hover{
     user-select:none;
   }
   .rating input:checked ~ label{      /* 選択されている星まで塗る */
-    color:#3a3f4a;
+    color:#ec9a3c;
   }
   .rating label:hover,
   .rating label:hover ~ label{        /* ホバー時プレビュー */
-    color:#3a3f4a;
+    color:#ec9a3c;
   }  
 
 .range-labels{
