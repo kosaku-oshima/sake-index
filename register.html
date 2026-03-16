@@ -59,18 +59,35 @@
                         <input type="text" id="tags" name="tags" placeholder="例：酸味, 食中酒, 山田錦">
                     </div>
                     <div class="form-group">
-                        <label for="sweetness">辛い/甘い</label>
+                        <label for="sweetness">甘い/辛い</label>
                         <div class="range-labels">
-                            <span>辛い</span>
                             <span>甘い</span>
+                            <span>やや甘い</span>
+                            <span>判断に迷う</span>
+                            <span>やや辛い</span>
+                            <span>辛い</span>
                         </div>
-                        <input id="sweetness" type="range" min="-2" max="2" step="1" value="0" />
+                        <input id="sweetness" type="range" min="-2" max="2" step="1" value="0" list="tickmarks"/>
+                            <datalist id="tickmarks">
+                                <option value="-2"></option>
+                                <option value="-1"></option>
+                                <option value="0"></option>
+                                <option value="1"></option>
+                                <option value="2"></option>
+                            </datalist>
                     </div>
                     <div class="form-group">
                         <label for="bodyLevel">軽い/重い</label>
                         <div class="range-labels">
                             <span>軽い</span>
                             <span>重い</span>
+                        </div>
+                        <div class="range-scales">
+                            <span>-2</span>
+                            <span>-1</span>
+                            <span>0</span>
+                            <span>+1</span>
+                            <span>+2</span>
                         </div>
                         <input id="bodyLevel" type="range" min="-2" max="2" step="1" value="0" />
                     </div>
