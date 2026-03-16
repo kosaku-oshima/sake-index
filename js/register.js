@@ -34,8 +34,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 　//入力チェック
     if (!name) {
-      alert("日本酒の名前は必須です。");
+      alert("酒名は入力必須です。");
       return;
+    }
+    if (name > 50) {
+      alert("酒名は50文字以内で入力してください。")
     }
 
     const entry = {

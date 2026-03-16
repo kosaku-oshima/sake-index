@@ -16,17 +16,24 @@ container.h1{
 input[type="text"],
 input[type="range"],
 input[type="date"],
-input[type="number"]{
+input[type="number"],
+textarea{
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 16px;
     width: 100%;
 }
 
-label{
+.form-group > label{
     display: block;
     font-weight: bold;
     margin-bottom: .5rem;
+}
+
+.radioOption label {
+    display: inline;
+    margin-bottom: 0;
+    font-weight: normal;
 }
 
 button{
