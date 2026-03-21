@@ -90,12 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (rating && entry.rating < Number(rating)) return false;//指定したrating以上を絞るための条件
       // if (file && entry.file !== file) return false;
       if (drinkDate && entry.drinkDate !== drinkDate) return false;
-      // if (sweetness && entry.sweetness !== Number(sweetness)) return false;
-      // if (acidity && entry.acidity !== Number(acidity)) return false;
-      // if (umami && entry.umami !== Number(umami)) return false;
-      // if (bodyLevel && entry.bodyLevel !== Number(bodyLevel)) return false;
-      // if (aroma && entry.aroma !== Number(aroma)) return false;
-      // if (repeatability && entry.repeatability !== Number(repeatability)) return false;
       if (sweetnessList.length > 0 && !sweetnessList.includes(entry.sweetness)) return false;
       if (acidityList.length > 0 && !acidityList.includes(entry.acidity)) return false;
       if (umamiList.length > 0 && !umamiList.includes(entry.umami)) return false;
