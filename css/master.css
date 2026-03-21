@@ -29,6 +29,10 @@ nav{
     align-items: center;
     padding: 10px;
     background-color: #fefdfa;
+    position: -webkit-sticky; /* Safari対応 */
+    position: sticky;
+    top: 0;                   /* 画面の一番上に固定 */
+    z-index: 1000;            /* コンテンツの下に潜り込まないようにする */
 }
 
 nav h1{
