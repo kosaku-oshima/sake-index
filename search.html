@@ -27,53 +27,165 @@
                         <input type="text" id= "name" name="name">
                     </div>
                     <div class="form-group">
-                        <label for="rating">お気に入り度（指定値以上を検索）</label>
-                        <input type="number" id="rating" name="rating"  min="1" max="5" step="1">
+                        <label>お気に入り度（指定値以上を検索）</label>
+                        <div class="rating">
+                            <input type="radio" id="star5" name="rating" value="5">
+                            <label for="star5">★</label>
+                            <input type="radio" id="star4" name="rating" value="4">
+                            <label for="star4">★</label>
+                            <input type="radio" id="star3" name="rating" value="3">
+                            <label for="star3">★</label>
+                            <input type="radio" id="star2" name="rating" value="2">
+                            <label for="star2">★</label>
+                            <input type="radio" id="star1" name="rating" value="1">
+                            <label for="star1">★</label>
+                        </div>
                     </div>
                     <!-- <div class="form-group">
-                        <label>写真</label>
-                        <div class="radioOption">
-                            <input type="radio" id="fileChoice1" name="file" value="" checked />
-                            <label for="fileChoice1">すべて</label>
-                            <input type="radio" id="fileChoice2" name="file" value="y" />
-                            <label for="fileChoice2">あり</label>
-                            <input type="radio" id="fileChoice3" name="file" value="n" />
-                            <label for="fileChoice3">なし</label>
-                        </div> -->
-                    <!-- </div> -->
+                        <label for="file">写真</label>
+                        <input type="file" id="file" name="file">
+                    </div> -->
                     <div class="form-group">
-                        <label for="drinkDate">日付</label>
-                        <input type="date" id="drinkDate" name="drinkDate">
+                        <label for="drinkDate">飲んだ日付</label>
+                        <input type="date" id="drinkDate" name="drinkDate" placeholder="yyyy/mm/dd">
+                    </div>
+                    <div class="form-group">
+                        <label for="sweetness">甘口/辛口</label>
+                        <div class="checkboxOptions">
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="sweetnessChoice1" name="sweetness" value="-2" />
+                                <label for="sweetnessChoice1">甘い</label>
+                            </div>
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="sweetnessChoice2" name="sweetness" value="-1" />
+                                <label for="sweetnessChoice2">やや甘い</label>
+                            </div>
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="sweetnessChoice3" name="sweetness" value="0" />
+                                <label for="sweetnessChoice3">中間</label>
+                            </div>
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="sweetnessChoice4" name="sweetness" value="1" />
+                                <label for="sweetnessChoice4">やや辛い</label>
+                            </div>
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="sweetnessChoice5" name="sweetness" value="2" />
+                                <label for="sweetnessChoice5">辛い</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="acidity">酸味</label>
+                        <div class="checkboxOptions">
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="acidityChoice1" name="acidity" value="0" />
+                                <label for="acidityChoice1">なし</label>
+                            </div>
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="acidityChoice2" name="acidity" value="1" />
+                                <label for="acidityChoice2">やや酸味あり</label>
+                            </div>
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="acidityChoice3" name="acidity" value="2" />
+                                <label for="acidityChoice3">酸味あり</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="umami">味の印象</label>
+                        <div class="checkboxOptions">
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="umamiChoice1" name="umami" value="-2" />
+                                <label for="umamiChoice1">すっきり</label>
+                            </div>
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="umamiChoice2" name="umami" value="-1" />
+                                <label for="umamiChoice2">ややすっきり</label>
+                            </div>
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="umamiChoice3" name="umami" value="0" />
+                                <label for="umamiChoice3">中間</label>
+                            </div>
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="umamiChoice4" name="umami" value="1" />
+                                <label for="umamiChoice4">やや旨みあり</label>
+                            </div>
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="umamiChoice5" name="umami" value="2" />
+                                <label for="umamiChoice5">旨みが強い</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="bodyLevel">飲み口</label>
+                        <div class="checkboxOptions">
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="bodyLevelChoice1" name="bodyLevel" value="-2" />
+                                <label for="bodyLevelChoice1">軽い</label>
+                            </div>
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="bodyLevelChoice2" name="bodyLevel" value="-1" />
+                                <label for="bodyLevelChoice2">やや軽い</label>
+                            </div>
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="bodyLevelChoice3" name="bodyLevel" value="0" />
+                                <label for="bodyLevelChoice3">中間</label>
+                            </div>
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="bodyLevelChoice4" name="bodyLevel" value="1" />
+                                <label for="bodyLevelChoice4">やや重い</label>
+                            </div>
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="bodyLevelChoice5" name="bodyLevel" value="2" />
+                                <label for="bodyLevelChoice5">重い</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="aroma">香りの華やかさ</label>
+                        <div class="checkboxOptions">
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="aromaChoice1" name="aroma" value="0" />
+                                <label for="aromaChoice1">穏やか</label>
+                            </div>
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="aromaChoice2" name="aroma" value="1" />
+                                <label for="aromaChoice2">やや華やか</label>
+                            </div>
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="aromaChoice3" name="aroma" value="2" />
+                                <label for="aromaChoice3">華やか</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="repeatability">また飲みたいか</label>
+                        <div class="checkboxOptions">
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="repeatabilityChoice1" name="repeatability" value="1" />
+                                <label for="repeatabilityChoice1">また飲みたい</label>
+                            </div>
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="repeatabilityChoice2" name="repeatability" value="0" />
+                                <label for="repeatabilityChoice2">普通</label>
+                            </div>
+                            <div class="checkboxOption">
+                                <input type="checkbox" id="repeatabilityChoice3" name="repeatability" value="-1" />
+                                <label for="repeatabilityChoice3">あまり好みではない</label>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="memo">一行メモ</label>
                         <input type="text" id="memo" name="memo">
                     </div>
                     <div class="form-group">
-                        <label for="tags">タグ（完全一致、1つずつ検索）</label>
+                        <label for="tags">タグ（カンマ区切り）</label>
                         <input type="text" id="tags" name="tags">
                     </div>
                     <div class="form-group">
-                        <label for="sweetness">甘い/辛い</label>
-                        <select id="sweetness" name="sweetness">
-                            <option value="">未選択</option>
-                            <option value="-2">-2 = 甘い</option>
-                            <option value="-1">-1 = やや甘い</option>
-                            <option value="0">0 = 判断に迷う</option>
-                            <option value="1">1 = やや辛い</option>
-                            <option value="2">2 = 辛い</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="bodyLevel">軽い/重い</label>
-                        <select id="bodyLevel" name="bodyLevel">
-                            <option value="">未選択</option>
-                            <option value="-2">-2 = 軽い</option>
-                            <option value="-1">-1 = やや軽い</option>
-                            <option value="0">0 = 判断に迷う</option>
-                            <option value="1">1 = やや重い</option>
-                            <option value="2">2 = 重い</option>
-                        </select>
+                        <label for="notes">備考</label>
+                        <textarea id="notes" name="notes" rows="5"></textarea>
                     </div>
     
                     <button type="submit">検索</button>

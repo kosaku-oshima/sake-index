@@ -55,24 +55,50 @@ document.addEventListener("DOMContentLoaded", () => {
   //URLのパラメーターから検索条件を取得し、各変数に代入する。
   const params = new URLSearchParams(location.search);
   if (params.size > 0) {
+    // const entry = {
+    //   id: uuid(),
+    //   name,
+    //   rating: getRating(),
+    //   drinkDate,   // 任意（今日が初期）
+    //   sweetness,
+    //   acidity,
+    //   umami,
+    //   bodyLevel,
+    //   aroma,
+    //   repeatability,
+    //   memo,
+    //   tags: parseTags(tagsText),
+    //   notes,
+    //   createdAt: Date.now(), // ソート用（登録日時）
+    // };
     const name = params.get("name");
     const rating = params.get("rating");
-    const file = params.get("file");
+    // const file = params.get("file");
     const drinkDate = params.get("drinkDate");
+    const sweetness = params.get("sweetness");
+    const acidity = params.get("acidity");
+    const umami = params.get("umami");
+    const bodyLevel = params.get("bodyLevel");
+    const aroma = params.get("aroma");
+    const repeatability = params.get("repeatability");
     const memo = params.get("memo");
     const tags = params.get("tags");
-    const sweetness = params.get("sweetness");
-    const bodyLevel = params.get("bodyLevel");
+    const notes = params.get("notes");
 
     const filteredEntries = entries.filter(entry => {
       if (name && !entry.name.includes(name)) return false;
       if (rating && entry.rating < Number(rating)) return false;//指定したrating以上を絞るための条件
       // if (file && entry.file !== file) return false;
       if (drinkDate && entry.drinkDate !== drinkDate) return false;
+      if (sweetness && entry.sweetness !== Number(sweetness)) return false;
+      if (acidity && entry.acidity !== Number(acidity)) return false;
+      if (umami && entry.umami !== Number(umami)) return false;
+      if (bodyLevel && entry.bodyLevel !== Number(bodyLevel)) return false;
+      if (aroma && entry.aroma !== Number(aroma)) return false;
+      if (repeatability && entry.repeatability !== Number(repeatability)) return false;
       if (memo && !entry.memo.includes(memo)) return false;
       if (tags && !(entry.tags ?? []).includes(tags)) return false;
-      if (sweetness && entry.sweetness !== Number(sweetness)) return false;
-      if (bodyLevel && entry.bodyLevel !== Number(bodyLevel)) return false;
+      if (notes && !entry.notes.includes(notes)) return false;
       return true;
     })
 

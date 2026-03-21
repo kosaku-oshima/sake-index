@@ -58,21 +58,24 @@ a:not(.logo):hover{
     font-size: 1.8rem;
 }
 
-.radioOptions input[type="radio"] {
+.radioOptions input[type="radio"],
+.checkboxOptions input[type="checkbox"] {
     appearance: auto;
     -webkit-appearance: radio; /* Safari系保険 */
     width: auto;
     height: auto;
   }
 
-.radioOptions {
+.radioOptions,
+.checkboxOptions {
     display: flex;
     gap: 12px;
     align-items: center;
     flex-wrap: wrap;
   }
 
-  .radioOption {
+.radioOption,
+.checkboxOption {
     display: flex;
     gap: 4px;
     align-items: center;
