@@ -4,6 +4,13 @@ function getRating() {
     return checked ? Number(checked.value) : null;
   }
 
+//チェックボックスで複数選択される項目のvalueを配列に格納するための関数
+function getCheckedValues(name) {
+  return Array.from(
+    document.querySelectorAll(`input[name="${name}"]:checked`)
+  ).map(el => Number(el.value));
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("searchForm");
     
@@ -17,23 +24,26 @@ document.addEventListener("DOMContentLoaded", () => {
         // const file = document.querySelector('input[name="file"]:checked')?.value ?? "";
         const drinkDate = document.getElementById("drinkDate")?.value ?? null;
 
-        const checkedSweetness = document.querySelector('input[name="sweetness"]:checked');
-        const sweetness = checkedSweetness ? Number(checkedSweetness.value) : null;
-        
-        const checkedAcidity = document.querySelector('input[name="acidity"]:checked');
-        const acidity = checkedAcidity ? Number(checkedAcidity.value) : null;
-        
-        const checkedUmami = document.querySelector('input[name="umami"]:checked');
-        const umami = checkedUmami ? Number(checkedUmami.value) : null;
-        
-        const checkedBodyLevel = document.querySelector('input[name="bodyLevel"]:checked');
-        const bodyLevel = checkedBodyLevel ? Number(checkedBodyLevel.value) : null;
-        
-        const checkedAroma = document.querySelector('input[name="aroma"]:checked');
-        const aroma = checkedAroma ? Number(checkedAroma.value) : null;
-        
-        const checkedRepeatability = document.querySelector('input[name="repeatability"]:checked');
-        const repeatability = checkedRepeatability ? Number(checkedRepeatability.value) : null;
+        const checkedSweetnessList = getCheckedValues("sweetness");
+        // const checkedSweetness = document.querySelector('input[name="sweetness"]:checked');
+        // const sweetness = checkedSweetness ? Number(checkedSweetness.value) : null;
+        const checkedAcidityList = getCheckedValues("acidity");
+        // const checkedAcidity = document.querySelector('input[name="acidity"]:checked');
+        // const acidity = checkedAcidity ? Number(checkedAcidity.value) : null;
+
+        const checkedUmamiList = getCheckedValues("umami");
+        // const checkedUmami = document.querySelector('input[name="umami"]:checked');
+        // const umami = checkedUmami ? Number(checkedUmami.value) : null;
+        const checkedBodyLevelList = getCheckedValues("bodyLevel");
+        // const checkedBodyLevel = document.querySelector('input[name="bodyLevel"]:checked');
+        // const bodyLevel = checkedBodyLevel ? Number(checkedBodyLevel.value) : null;
+
+        const checkedAromaList = getCheckedValues("aroma");
+        // const checkedAroma = document.querySelector('input[name="aroma"]:checked');
+        // const aroma = checkedAroma ? Number(checkedAroma.value) : null;
+        const checkedRepeatabilityList = getCheckedValues("repeatability");
+        // const checkedRepeatability = document.querySelector('input[name="repeatability"]:checked');
+        // const repeatability = checkedRepeatability ? Number(checkedRepeatability.value) : null;
         
         const memo = (document.getElementById("memo")?.value ?? "").trim();
         const tags = document.getElementById("tags")?.value ?? "";
@@ -44,12 +54,18 @@ document.addEventListener("DOMContentLoaded", () => {
         if (rating !== null) params.set("rating", rating);
         // if (file) params.set("file", file);
         if (drinkDate !== "") params.set("drinkDate", drinkDate);
-        if (sweetness !== null) params.set("sweetness", sweetness);
-        if (acidity !== null) params.set("acidity", acidity);
-        if (umami !== null) params.set("umami", umami);
-        if (bodyLevel !== null) params.set("bodyLevel", bodyLevel);
-        if (aroma !== null) params.set("aroma", aroma);
-        if (repeatability !== null) params.set("repeatability", repeatability);
+        if (checkedSweetnessList.length > 0) checkedSweetnessList.forEach(value => params.append("sweetness", value));
+        if (checkedAcidityList.length > 0) checkedAcidityList.forEach(value => params.append("acidity", value));
+        if (checkedUmamiList.length > 0) checkedUmamiList.forEach(value => params.append("umami", value));
+        if (checkedBodyLevelList.length > 0) checkedBodyLevelList.forEach(value => params.append("bodyLevel", value));
+        if (checkedAromaList.length > 0) checkedAromaList.forEach(value => params.append("aroma", value));
+        if (checkedRepeatabilityList.length > 0) checkedRepeatabilityList.forEach(value => params.append("repeatability", value));
+        // if (sweetness !== null) params.set("sweetness", sweetness);
+        // if (acidity !== null) params.set("acidity", acidity);
+        // if (umami !== null) params.set("umami", umami);
+        // if (bodyLevel !== null) params.set("bodyLevel", bodyLevel);
+        // if (aroma !== null) params.set("aroma", aroma);
+        // if (repeatability !== null) params.set("repeatability", repeatability);
         if (memo !== "") params.set("memo", memo);
         if (tags !== "") params.set("tags", tags);
         if (notes !== "") params.set("notes", notes);
