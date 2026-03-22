@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0)); // 登録日降順
 
   if (entries.length === 0) {
-    listEl.innerHTML = `<div class="empty">まだ記録がありません。右上の「追加」から登録してみてください。</div>`;
+    listEl.innerHTML = `<div class="empty">記録がありません。右上の「追加」から登録してみてください。</div>`;
     return;
   }
 
