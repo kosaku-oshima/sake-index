@@ -1,3 +1,5 @@
+import { parseTags } from "./storage.js";
+
 //お気に入り度の値を取得し、なければnullを返す
 function getRating() {
     const checked = document.querySelector('input[name="rating"]:checked');
@@ -23,19 +25,22 @@ document.addEventListener("DOMContentLoaded", () => {
         const rating = getRating();
         // const file = document.querySelector('input[name="file"]:checked')?.value ?? "";
         const drinkDate = document.getElementById("drinkDate")?.value ?? null;
-
+        //チェックボックスで複数選択の項目は選択されたvalueを配列に格納する
         const checkedSweetnessList = getCheckedValues("sweetness");
         const checkedAcidityList = getCheckedValues("acidity");
         const checkedUmamiList = getCheckedValues("umami");
         const checkedBodyLevelList = getCheckedValues("bodyLevel");
         const checkedAromaList = getCheckedValues("aroma");
         const checkedRepeatabilityList = getCheckedValues("repeatability");
-        
+
         const memo = (document.getElementById("memo")?.value ?? "").trim();
-        const tags = document.getElementById("tags")?.value ?? "";
+
+        //tagはテキストをカンマ区切りで分割して配列に格納する。
+        const tagsText = document.getElementById("tags")?.value ?? "";
+        const tagsList = parseTags(tagsText);
+
         const notes = (document.getElementById("notes")?.value ?? "").trim();
         
-        //ifの条件に"0"が入るとfalseになってしまうため、sweetness等は値でなく「空欄かどうか」で条件を書く。
         if (name !== "") params.set("name", name);
         if (rating !== null) params.set("rating", rating);
         // if (file) params.set("file", file);
@@ -48,7 +53,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (checkedRepeatabilityList.length > 0) checkedRepeatabilityList.forEach(value => params.append("repeatability", value));
 
         if (memo !== "") params.set("memo", memo);
-        if (tags !== "") params.set("tags", tags);
+
+        if (tagsList.length > 0) tagsList.forEach(value => params.append("tags", value));
+        
         if (notes !== "") params.set("notes", notes);
 
         //検索条件が入ったパラメーターを渡しつつindex.htmlに戻る

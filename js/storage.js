@@ -48,7 +48,7 @@ export function uuid() {
 export function parseTags(text) {
   // いったん「カンマ/読点/空白」で分割（後でチップ入力に置き換え）
   return (text ?? "")
-    .split(/[,\u3001\s]+/)
+    .split(/[,\u3001\s]+/)//splitを使うと、カンマ区切りで分割した文字列を配列に格納できる。
     .map(s => s.trim())
-    .filter(Boolean);
+    .filter(Boolean);//trim()後に配列の要素の中で""になったものを除く処理。
 }

@@ -82,23 +82,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const aromaList = params.getAll("aroma").map(Number);
     const repeatabilityList = params.getAll("repeatability").map(Number);
     const memo = params.get("memo");
-    const tags = params.get("tags");
+    const tagsList = params.getAll("tags");//getAll()するとURLにtagが複数入っていたとしても一つの配列に格納された状態で取得できる。
     const notes = params.get("notes");
 
     const filteredEntries = entries.filter(entry => {
-      if (name && !entry.name.includes(name)) return false;
-      if (rating && entry.rating < Number(rating)) return false;//指定したrating以上を絞るための条件
+      if (name && !(entry.name ?? "").includes(name)) return false;
+      if (rating && Number(entry.rating ?? 0) < Number(rating)) return false;//指定したrating以上を絞るための条件
       // if (file && entry.file !== file) return false;
       if (drinkDate && entry.drinkDate !== drinkDate) return false;
-      if (sweetnessList.length > 0 && !sweetnessList.includes(entry.sweetness)) return false;
-      if (acidityList.length > 0 && !acidityList.includes(entry.acidity)) return false;
-      if (umamiList.length > 0 && !umamiList.includes(entry.umami)) return false;
-      if (bodyLevelList.length > 0 && !bodyLevelList.includes(entry.bodyLevel)) return false;
-      if (aromaList.length > 0 && !aromaList.includes(entry.aroma)) return false;
-      if (repeatabilityList.length > 0 && !repeatabilityList.includes(entry.repeatability)) return false;
-      if (memo && !entry.memo.includes(memo)) return false;
-      if (tags && !(entry.tags ?? []).includes(tags)) return false;
-      if (notes && !entry.notes.includes(notes)) return false;
+      if (sweetnessList.length > 0 && !sweetnessList.includes(Number(entry.sweetness))) return false;
+      if (acidityList.length > 0 && !acidityList.includes(Number(entry.acidity))) return false;
+      if (umamiList.length > 0 && !umamiList.includes(Number(entry.umami))) return false;
+      if (bodyLevelList.length > 0 && !bodyLevelList.includes(Number(entry.bodyLevel))) return false;
+      if (aromaList.length > 0 && !aromaList.includes(Number(entry.aroma))) return false;
+      if (repeatabilityList.length > 0 && !repeatabilityList.includes(Number(entry.repeatability))) return false;
+      if (memo && !(entry.memo ?? "").includes(memo)) return false;
+      if (tagsList.length > 0 && !tagsList.every(tag => (entry.tags ?? []).includes(tag))) return false;//AND検索なのでevery、もしOR検索にするならsomeを使う。
+      if (notes && !(entry.notes ?? "").includes(notes)) return false;
       return true;
     })
 
