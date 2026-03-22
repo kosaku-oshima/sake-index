@@ -52,35 +52,142 @@
                         <input type="date" id="drinkDate" name="drinkDate" placeholder="yyyy/mm/dd">
                     </div>
                     <div class="form-group">
-                        <label for="sweetness">甘い/辛い</label>
-                        <div class="range-labels">
-                            <span>甘い</span>
-                            <span>やや甘い</span>
-                            <span>判断に迷う</span>
-                            <span>やや辛い</span>
-                            <span>辛い</span>
+                        <label for="sweetness">甘口/辛口</label>
+                        <div class="radioOptions">
+                            <div class="radioOption">
+                                <input type="radio" id="sweetnessChoice1" name="sweetness" value="-2" />
+                                <label for="sweetnessChoice1">甘い</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" id="sweetnessChoice2" name="sweetness" value="-1" />
+                                <label for="sweetnessChoice2">やや甘い</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" id="sweetnessChoice3" name="sweetness" value="0" />
+                                <label for="sweetnessChoice3">中間</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" id="sweetnessChoice4" name="sweetness" value="1" />
+                                <label for="sweetnessChoice4">やや辛い</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" id="sweetnessChoice5" name="sweetness" value="2" />
+                                <label for="sweetnessChoice5">辛い</label>
+                            </div>
                         </div>
-                        <input id="sweetness" type="range" min="-2" max="2" step="1" value="0" />
+                    </div>
+                    <div class="form-group">
+                        <label for="acidity">酸味</label>
+                        <div class="radioOptions">
+                            <div class="radioOption">
+                                <input type="radio" id="acidityChoice1" name="acidity" value="0" />
+                                <label for="acidityChoice1">なし</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" id="acidityChoice2" name="acidity" value="1" />
+                                <label for="acidityChoice2">やや酸味あり</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" id="acidityChoice3" name="acidity" value="2" />
+                                <label for="acidityChoice3">酸味あり</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="umami">味の印象</label>
+                        <div class="radioOptions">
+                            <div class="radioOption">
+                                <input type="radio" id="umamiChoice1" name="umami" value="-2" />
+                                <label for="umamiChoice1">すっきり</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" id="umamiChoice2" name="umami" value="-1" />
+                                <label for="umamiChoice2">ややすっきり</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" id="umamiChoice3" name="umami" value="0" />
+                                <label for="umamiChoice3">中間</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" id="umamiChoice4" name="umami" value="1" />
+                                <label for="umamiChoice4">やや旨みあり</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" id="umamiChoice5" name="umami" value="2" />
+                                <label for="umamiChoice5">旨みが強い</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="bodyLevel">飲み口</label>
+                        <div class="radioOptions">
+                            <div class="radioOption">
+                                <input type="radio" id="bodyLevelChoice1" name="bodyLevel" value="-2" />
+                                <label for="bodyLevelChoice1">軽い</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" id="bodyLevelChoice2" name="bodyLevel" value="-1" />
+                                <label for="bodyLevelChoice2">やや軽い</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" id="bodyLevelChoice3" name="bodyLevel" value="0" />
+                                <label for="bodyLevelChoice3">中間</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" id="bodyLevelChoice4" name="bodyLevel" value="1" />
+                                <label for="bodyLevelChoice4">やや重い</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" id="bodyLevelChoice5" name="bodyLevel" value="2" />
+                                <label for="bodyLevelChoice5">重い</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="aroma">香りの華やかさ</label>
+                        <div class="radioOptions">
+                            <div class="radioOption">
+                                <input type="radio" id="aromaChoice1" name="aroma" value="0" />
+                                <label for="aromaChoice1">穏やか</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" id="aromaChoice2" name="aroma" value="1" />
+                                <label for="aromaChoice2">やや華やか</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" id="aromaChoice3" name="aroma" value="2" />
+                                <label for="aromaChoice3">華やか</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="repeatability">また飲みたいか</label>
+                        <div class="radioOptions">
+                            <div class="radioOption">
+                                <input type="radio" id="repeatabilityChoice1" name="repeatability" value="1" />
+                                <label for="repeatabilityChoice1">また飲みたい</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" id="repeatabilityChoice2" name="repeatability" value="0" />
+                                <label for="repeatabilityChoice2">普通</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" id="repeatabilityChoice3" name="repeatability" value="-1" />
+                                <label for="repeatabilityChoice3">あまり好みではない</label>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="memo">一行メモ</label>
-                        <input type="text" id="memo" name="memo" placeholder="例：辛口、冷酒向き">
+                        <input type="text" id="memo" name="memo" maxlength="50" placeholder="例：辛口で冷酒向き">
                     </div>
                     <div class="form-group">
                         <label for="tags">タグ（カンマ区切り）</label>
                         <input type="text" id="tags" name="tags" placeholder="例：酸味, 食中酒, 山田錦">
                     </div>
-                    
                     <div class="form-group">
-                        <label for="bodyLevel">軽い/重い</label>
-                        <div class="range-labels">
-                            <span>軽い</span>
-                            <span>やや軽い</span>
-                            <span>判断に迷う</span>
-                            <span>やや重い</span>
-                            <span>重い</span>
-                        </div>
-                        <input id="bodyLevel" type="range" min="-2" max="2" step="1" value="0" />
+                        <label for="notes">備考</label>
+                        <textarea id="notes" name="notes" maxlength="200" rows="5" placeholder="その他特徴など"></textarea>
                     </div>
     
                     <button type="submit">更新</button>

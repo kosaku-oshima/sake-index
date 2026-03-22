@@ -5,24 +5,29 @@ import {
   parseTags
 } from "./storage.js";
 
-function escapeHtml(s) {
-  return String(s)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
 function getIdFromQuery() {
   const params = new URLSearchParams(location.search);
   return params.get("id");
 }
 
-//お気に入り度の値を取得、なければ★3にする
+//お気に入り度の値を取得、なければnullにする
 function getRating() {
   const checked = document.querySelector('input[name="rating"]:checked');
-  return checked ? Number(checked.value) : 3;
+  return checked ? Number(checked.value) : null;
+}
+
+//画面読み込み時にラジオボタンの選択済み項目をチェック状態にする関数
+function setRadioChecked(name, value) {
+  const radio = document.querySelector(`input[name="${name}"][value="${value}"]`) ?? null;
+  if (radio) {
+    radio.checked = true;
+  }
+}
+
+//編集内容確定時にラジオボタンでチェックがついている選択肢のvalueを取得する関数
+function getCheckedRadioValue(name) {
+  const checked = document.querySelector(`input[name="${name}"]:checked`);
+  return checked ? Number(checked.value) : null;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -44,25 +49,35 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  document.getElementById("name").value = originalEntry.name;
+  //nameの初期値をセット
+  document.getElementById("name").value = originalEntry.name ?? "";
 
+  //ratingの初期値をセット
   const checkedStar = document.querySelector(`input[name="rating"][value="${originalEntry.rating}"]`);
   if (checkedStar) {
     checkedStar.checked = true;
   }
 
-  // Dateオブジェクトに変換（もし文字列で保存されていてもこれで安定します）
-  const dateObj = new Date(originalEntry.drinkDate);
-  // input type="date" が認識できる "YYYY-MM-DD" 形式に変換
-  const yyyy = String(dateObj.getFullYear());
-  const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
-  const dd = String(dateObj.getDate()).padStart(2, '0');
-  const dateString = `${yyyy}-${mm}-${dd}`;
-  document.getElementById("drinkDate").value = dateString;
-  document.getElementById("memo").value = originalEntry.memo;
+  //drinkDateの初期値をセット
+  const drinkDateEl = document.getElementById("drinkDate");
+  if (originalEntry.drinkDate) {
+    drinkDateEl.value = originalEntry.drinkDate;
+  } else {
+    drinkDateEl.value = "";
+  }
+
+  //ラジオボタンの項目の初期値をセット
+  setRadioChecked("sweetness", originalEntry.sweetness);
+  setRadioChecked("acidity", originalEntry.acidity);
+  setRadioChecked("umami", originalEntry.umami);
+  setRadioChecked("bodyLevel", originalEntry.bodyLevel);
+  setRadioChecked("aroma", originalEntry.aroma);
+  setRadioChecked("repeatability", originalEntry.repeatability);
+
+  //テキスト形式の項目の初期値をセット
+  document.getElementById("memo").value = originalEntry.memo ?? "";
   document.getElementById("tags").value = (originalEntry.tags ?? []).join(", ");
-  document.getElementById("sweetness").value = originalEntry.sweetness;
-  document.getElementById("bodyLevel").value = originalEntry.bodyLevel;
+  document.getElementById("notes").value = originalEntry.notes ?? "";
 
   deleteBtn.addEventListener("click", () => {
     if (!confirm("この記録を削除します。よろしいですか？")) return;
@@ -75,31 +90,45 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
 
     const name = (document.getElementById("name")?.value ?? "").trim();
+    const drinkDate = document.getElementById("drinkDate")?.value ?? "";
+    const sweetness = getCheckedRadioValue("sweetness");
+    const acidity = getCheckedRadioValue("acidity");
+    const umami = getCheckedRadioValue("umami");
+    const bodyLevel = getCheckedRadioValue("bodyLevel");
+    const aroma = getCheckedRadioValue("aroma");
+    const repeatability = getCheckedRadioValue("repeatability");
     const memo = (document.getElementById("memo")?.value ?? "").trim();
     const tagsText = document.getElementById("tags")?.value ?? "";
-    const sweetness = Number(document.getElementById("sweetness")?.value ?? 0);
-    const bodyLevel = Number(document.getElementById("bodyLevel")?.value ?? 0);
-    const drinkDate = document.getElementById("drinkDate")?.value ?? "";
+    const notes = (document.getElementById("notes")?.value ?? "").trim();
 
-　//入力チェック
+    //入力チェック
     if (!name) {
       alert("日本酒の名前は必須です。");
       return;
     }
-    if (!memo) {
-      alert("ひとことメモは必須です。");
+    if (name.length > 50) {
+      alert("酒名は50文字以内で入力してください。")
+      return;
+    }
+    if (notes.length > 200) {
+      alert("備考は200文字以内で入力してください。")
       return;
     }
 
     const updatedEntry = {
       id: originalEntry.id,
       name,
-      memo,
       rating: getRating(),
+      drinkDate,
+      sweetness,
+      acidity,
+      umami,
+      bodyLevel,
+      aroma,
+      repeatability,
+      memo,
       tags: parseTags(tagsText),
-      sweetness,   // 甘い(-2) ←→ 辛い(+2)
-      bodyLevel,   // 軽い(-2) ←→ 重い(+2)
-      drinkDate,   // 任意（今日が初期）
+      notes,
       createdAt: originalEntry.createdAt, // ソート用（登録日時）
     };
 
