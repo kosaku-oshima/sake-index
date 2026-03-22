@@ -1,10 +1,27 @@
 import { loadEntries } from "./storage.js";
 
+// 日時を yyyy/MM/dd HH:mm 形式に変換
+function formatDateTime(value) {
+  if (value === null || value === undefined || value === "") return "";
+
+  const date = new Date(value);
+
+  // 不正な日付対策
+  if (Number.isNaN(date.getTime())) return "";
+
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  const hh = String(date.getHours()).padStart(2, "0");
+  const mi = String(date.getMinutes()).padStart(2, "0");
+
+  return `${yyyy}/${mm}/${dd} ${hh}:${mi}`;
+}
+
 // CSV用に値を安全な文字列へ変換する
 function escapeCsv(value) {
   const str = String(value ?? "");
 
-  // カンマ、改行、ダブルクォートが含まれる場合はCSVルールに従って囲む
   if (str.includes(",") || str.includes('"') || str.includes("\n")) {
     return `"${str.replaceAll('"', '""')}"`;
   }
@@ -46,8 +63,8 @@ function toCsv(entries) {
     entry.memo,
     (entry.tags ?? []).join("|"),
     entry.notes,
-    entry.createdAt,
-    entry.updatedAt
+    formatDateTime(entry.createdAt),
+    formatDateTime(entry.updatedAt)
   ]);
 
   const lines = [
@@ -58,7 +75,7 @@ function toCsv(entries) {
   return lines.join("\n");
 }
 
-// CSVをダウンロードさせる
+// // CSVをダウンロードさせる
 function downloadCsv(filename, csvText) {
   // Excelで文字化けしにくくするためBOMを付ける
   const bom = "\uFEFF";
@@ -75,7 +92,7 @@ function downloadCsv(filename, csvText) {
   URL.revokeObjectURL(url);
 }
 
-// YYYY-MM-DD_HHMMSS 形式の時刻文字列を作る
+// // YYYY-MM-DD_HHMMSS 形式の時刻文字列を作る
 function makeTimestamp() {
   const now = new Date();
   const yyyy = now.getFullYear();
