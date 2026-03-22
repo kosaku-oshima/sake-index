@@ -75,6 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
       tags: parseTags(tagsText),
       notes,
       createdAt: Date.now(), // ソート用（登録日時）
+      updatedAt: ""//新規登録時は空欄
     };
 
     //実行後index.htmlに戻る処理

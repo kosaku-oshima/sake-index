@@ -17,25 +17,37 @@ function toCsv(entries) {
   const header = [
     "id",
     "name",
-    "memo",
     "rating",
-    "tags",
-    "sweetness",
-    "bodyLevel",
     "drinkDate",
-    "createdAt"
+    "sweetness",
+    "acidity",
+    "umami",
+    "bodyLevel",
+    "aroma",
+    "repeatability",
+    "memo",
+    "tags",
+    "notes",
+    "createdAt",
+    "updatedAt"
   ];
 
   const rows = entries.map(entry => [
     entry.id,
     entry.name,
-    entry.memo,
     entry.rating,
-    (entry.tags ?? []).join("|"),
-    entry.sweetness,
-    entry.bodyLevel,
     entry.drinkDate,
-    entry.createdAt
+    entry.sweetness,
+    entry.acidity,
+    entry.umami,
+    entry.bodyLevel,
+    entry.aroma,
+    entry.repeatability,
+    entry.memo,
+    (entry.tags ?? []).join("|"),
+    entry.notes,
+    entry.createdAt,
+    entry.updatedAt
   ]);
 
   const lines = [

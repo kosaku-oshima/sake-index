@@ -130,6 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
       tags: parseTags(tagsText),
       notes,
       createdAt: originalEntry.createdAt, // ソート用（登録日時）
+      updatedAt: Date.now()//更新日に現在日付をセット
     };
 
     //実行後index.htmlに戻る処理
