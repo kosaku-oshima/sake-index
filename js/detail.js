@@ -203,6 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const editBtn = document.getElementById("editBtn");
   const cancelEditBtn = document.getElementById("cancelEditBtn");
   const deleteBtn = document.getElementById("deleteBtn");
+  const backToListLink = document.getElementById("backToList");
 
   //idがないという異常時の表示
   if (!id) {
@@ -255,6 +256,16 @@ document.addEventListener("DOMContentLoaded", () => {
     deleteEntryById(id);
     location.href = "index.html";
   });
+
+  //一覧に戻るボタン押下時の処理
+  backToListLink.addEventListener("click", () => {
+    const backParams = new URLSearchParams(window.location.search);
+    backParams.delete("id");
+    const backUrl = backParams.toString()
+      ? `index.html?${backParams.toString()}`
+      : "index.html";
+    document.getElementById("backToList").href = backUrl
+  })
 
   //フォーム送信時の処理、各項目の入力値を取得し、無い場合は項目ごとにデフォルト値（""や0など）を入れてentryというデータの塊を作る。
   form.addEventListener("submit", (e) => {

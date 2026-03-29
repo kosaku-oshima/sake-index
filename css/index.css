@@ -42,3 +42,11 @@
     border-radius: 12px;
     margin-bottom: 12px;
 }
+
+.clear-filter {
+    display: block;
+    margin-left: auto;
+}
+.clear-filter[hidden] {  /*hiddenがTRUEのとき*/
+    display: none;
+}
