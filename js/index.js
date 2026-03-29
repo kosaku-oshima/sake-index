@@ -45,7 +45,9 @@ function renderCard(entry) {
   `;
 }
 
-//index.jsの処理
+//==================================================
+// 画面読み込み時の処理
+//==================================================
 // ページ読み込み完了（DOMContentLoaded）時に、index.html内の.card-list 要素を取得し、保存済みデータを読み込む。
 // 登録日降順に並べ替え、各要素を renderCard() でHTML文字列に変換して連結し、listEl.innerHTML に代入して一覧を表示する。
 // データが0件なら空表示メッセージを入れる。
@@ -68,9 +70,22 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  //絞り込み解除ボタンが押されたらパラメータがない状態でindex.htmlに移動する
   clearFilterBtn.addEventListener("click", () => {
     location.href = "index.html";
   })
+
+  //検索ボタンが押されたらURL内のパラメータをそのまま渡す
+  const searchMenuBtn = document.getElementById("searchMenuBtn");
+  searchMenuBtn.addEventListener("click", () => {
+    const searchMenuParams = new URLSearchParams(window.location.search);
+    const searchMenuUrl = searchMenuParams.toString()
+      ? `search.html?${searchMenuParams.toString()}`
+      : "search.html";
+    document.getElementById("searchMenuBtn").href = searchMenuUrl;
+  })
+
+
 
   //URLのパラメーターから検索条件を取得し、各変数に代入する。
   const params = new URLSearchParams(location.search);

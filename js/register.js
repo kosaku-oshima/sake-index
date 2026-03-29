@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const notes = (document.getElementById("notes")?.value ?? "").trim();
     
 
-　//入力チェック
+  //入力チェック
     if (!name) {
       alert("酒名は入力必須です。");
       return; //エラーのあとに保存せず止める処理。このreturnがないとエラーが出ているのにデータが保存される。

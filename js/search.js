@@ -13,9 +13,85 @@ function getCheckedValues(name) {
   ).map(el => Number(el.value));
 }
 
+//テキストで文字や日付を入れる項目の初期値をセットする関数
+function setInputValue(id, value) {
+  const element = document.getElementById(id);
+  if (element) {
+    element.value = value ?? "";
+  }
+}
+
+//ラジオボタンの選択肢を一つずつchecked=trueにする関数。主にrating用
+function setRadioChecked(name, value) {
+  if (value === null || value === "") return;
+
+  const radio = document.querySelector(`input[name="${name}"][value="${value}"]`);
+  if (radio) {
+    radio.checked = true;
+  }
+}
+
+//チェックボックスの選択肢を一つずつchecked=trueにする関数
+function setCheckboxChecked(name, values) {
+  values.forEach(value => {
+    const checkbox = document.querySelector(`input[name="${name}"][value="${value}"]`);
+    if (checkbox) {
+      checkbox.checked = true;
+    }
+  });
+}
+
+//編集フォームの初期値をセットする関数
+function fillFormFromParams() {
+  //パラメータ全体を取得
+  const params = new URLSearchParams(location.search);
+  //パラメータから各値を取得
+  const name = params.get("name");
+  const rating = params.get("rating");
+  const drinkDate = params.get("drinkDate");
+  const sweetnessList = params.getAll("sweetness").map(Number);
+  const acidityList = params.getAll("acidity").map(Number);
+  const umamiList = params.getAll("umami").map(Number);
+  const bodyLevelList = params.getAll("bodyLevel").map(Number);
+  const aromaList = params.getAll("aroma").map(Number);
+  const repeatabilityList = params.getAll("repeatability").map(Number);
+  const memo = params.get("memo");
+  const tagsList = params.getAll("tags");//getAll()するとURLにtagが複数入っていたとしても一つの配列に格納された状態で取得できる。
+  const notes = params.get("notes");
+  //各値を初期値としてセット
+  setInputValue("name", name);
+  setRadioChecked("rating", rating);
+  setInputValue("drinkDate", drinkDate);
+  setCheckboxChecked("sweetness", sweetnessList);
+  setCheckboxChecked("acidity", acidityList);
+  setCheckboxChecked("umami", umamiList);
+  setCheckboxChecked("bodyLevel", bodyLevelList);
+  setCheckboxChecked("aroma", aromaList);
+  setCheckboxChecked("repeatability", repeatabilityList);
+  setInputValue("memo", memo);
+  setInputValue("tags", tagsList.join(", "));
+  setInputValue("notes", notes);
+}
+
+//==================================================
+// 画面読み込み時の処理
+//==================================================
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("searchForm");
     const clearBtn = document.getElementById("clearBtn");
+    const backToListLink = document.getElementById("backToList");
+    //キャンセルリンク押下時の行先を先に確定させておく処理。リンククリック時に行先を操作するとうまくつながらない可能性があるため
+    if (backToListLink) {
+      const backParams = new URLSearchParams(window.location.search);
+      const backUrl = backParams.toString()
+        ? `index.html?${backParams.toString()}`
+        : "index.html";
+    
+      backToListLink.href = backUrl;
+    }
+
+    //パラメータを元に各項目の初期値をセット
+    fillFormFromParams();
     
     //フォーム送信時の処理、各項目の入力値を取得し、無い場合は項目ごとにデフォルト値（基本null）を入れてentryというデータの塊を作る。
     form.addEventListener("submit", (e) => {
