@@ -30,7 +30,7 @@ textarea{
     margin-bottom: .5rem;
 }
 
-.radioOption label,
+.radioOption,
 .checkboxOption label {
     display: inline;
     margin-bottom: 0;
@@ -86,14 +86,7 @@ button:hover{
   .rating label:hover,
   .rating label:hover ~ label{        /* ホバー時プレビュー */
     color:#ec9a3c;
-  }  
-
-.range-labels{
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: .5em;
-    font-size: .8em;
-}
+  }
 
 @media (max-width: 768px){
     body{

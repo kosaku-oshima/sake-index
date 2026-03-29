@@ -2,4 +2,30 @@
 @import url('master.css');
 
 /*独自のCSS*/
-@import url('register.css')
+@import url('register.css');
+
+/*閲覧表示用の★★★★★に適用*/
+.view-rating {
+    display: inline-flex;
+    gap: .5em;
+    font-size: 24px;
+  }
+  
+  .view-rating .star {
+    color: #e9e9ee;
+  }
+  
+  .view-rating .star.filled {
+    color: #ec9a3c;
+  }
+
+  /* 要素の表示非表示を切り替えをclass="hidden"の付け外しで実装する */
+  .hidden {
+    display: none !important;  /*!importantはこのCSSを他より優先してくださいという意味*/
+  }
+
+  /* id未指定、指定したidのデータがない場合のエラー文 */
+  .error-message {
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }

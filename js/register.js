@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     dateInput.value = `${yyyy}-${mm}-${dd}`;
   }
 
-　//フォーム送信時の処理、各項目の入力値を取得し、無い場合は項目ごとにデフォルト値（基本null）を入れてentryというデータの塊を作る。
+  //フォーム送信時の処理、各項目の入力値を取得し、無い場合は項目ごとにデフォルト値（基本null）を入れてentryというデータの塊を作る。
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 
