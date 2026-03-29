@@ -15,8 +15,9 @@ function getCheckedValues(name) {
 
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("searchForm");
+    const clearBtn = document.getElementById("clearBtn");
     
-  　//フォーム送信時の処理、各項目の入力値を取得し、無い場合は項目ごとにデフォルト値（基本null）を入れてentryというデータの塊を作る。
+    //フォーム送信時の処理、各項目の入力値を取得し、無い場合は項目ごとにデフォルト値（基本null）を入れてentryというデータの塊を作る。
     form.addEventListener("submit", (e) => {
         e.preventDefault();
         const params = new URLSearchParams();
@@ -61,4 +62,9 @@ document.addEventListener("DOMContentLoaded", () => {
         //検索条件が入ったパラメーターを渡しつつindex.htmlに戻る
         location.href = `index.html?${params.toString()}`;
     })
+
+    clearBtn.addEventListener("click", () => {
+      form.reset();
+    });
+
 })
