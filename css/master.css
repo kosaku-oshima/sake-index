@@ -21,13 +21,15 @@ body{
 .menu{
     display: flex;
     gap: 10px;
+    align-items: center;
 }
 
 nav{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    line-height: 1.2;
+    padding: 20px;
     background-color: #fefdfa;
     position: -webkit-sticky; /* Safari対応 */
     position: sticky;
@@ -51,7 +53,7 @@ a:not(.logo):hover{
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
-    margin-top: 10px;
+    margin: 10px auto 0;
     
 }
 
@@ -85,3 +87,12 @@ a:not(.logo):hover{
     align-items: center;
     flex-wrap: wrap;
   }
+
+@media (max-width: 768px){
+    .container{
+        width: calc(100% - 20px);
+        margin: 10px auto 0;
+        padding: 15px;
+        border-radius: 0;
+    }
+}
