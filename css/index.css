@@ -43,10 +43,30 @@
     margin-bottom: 12px;
 }
 
+.button-group {
+    display: block;
+    margin-bottom: 50px;
+    justify-content: end;
+}
+
 .clear-filter {
     display: block;
     margin-left: auto;
 }
 .clear-filter[hidden] {  /*hiddenがTRUEのとき*/
     display: none;
+}
+
+.sort-select {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 8px;
+}
+
+.sort-select select {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
 }

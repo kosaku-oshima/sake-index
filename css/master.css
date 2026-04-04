@@ -64,6 +64,13 @@ a:not(.logo):hover{
     font-size: 1.8rem;
 }
 
+.sort-select select {
+    appearance: auto;
+    -webkit-appearance: menulist;
+    width: auto;
+    height: auto;
+}
+
 .radioOptions input[type="radio"],
 .checkboxOptions input[type="checkbox"] {
     appearance: auto;

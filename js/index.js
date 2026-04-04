@@ -45,6 +45,88 @@ function renderCard(entry) {
   `;
 }
 
+//並び替えボタンが押されたらデータを並び変える
+function sortEntries(entries, sortOrder) {
+  const copied = [...entries];
+
+  switch (sortOrder) {
+    case "createdAt-asc":
+      copied.sort((a, b) => Number(a.createdAt ?? 0) - Number(b.createdAt ?? 0));
+      break;
+    case "createdAt-desc":
+      copied.sort((a, b) => Number(b.createdAt ?? 0) - Number(a.createdAt ?? 0));
+      break;
+    case "name-asc":
+      copied.sort((a, b) => (a.name ?? "").localeCompare((b.name ?? ""), "ja"));
+      break;
+    case "name-desc":
+      copied.sort((a, b) => (b.name ?? "").localeCompare((a.name ?? ""), "ja"));
+      break;
+    case "rating-desc":
+      copied.sort((a, b) => {
+        const ratingDiff = Number(b.rating ?? 0) - Number(a.rating ?? 0);
+        if (ratingDiff !== 0) return ratingDiff;
+        return Number(b.createdAt ?? 0) - Number(a.createdAt ?? 0);
+      });
+      break;
+    case "rating-asc":
+      copied.sort((a, b) => {
+        const ratingDiff = Number(a.rating ?? 0) - Number(b.rating ?? 0);
+        if (ratingDiff !== 0) return ratingDiff;
+        return Number(b.createdAt ?? 0) - Number(a.createdAt ?? 0);
+    });
+      break;
+  }
+
+  return copied;
+}
+
+//URLのパラメーターから検索条件を取得し、各変数に代入して返す関数。
+function getSearchParams() {
+  const params = new URLSearchParams(location.search);
+  return {
+    name : params.get("name"),
+    rating : params.get("rating"),
+    drinkDate : params.get("drinkDate"),
+    sweetnessList : params.getAll("sweetness").map(Number),
+    acidityList : params.getAll("acidity").map(Number),
+    umamiList : params.getAll("umami").map(Number),
+    bodyLevelList : params.getAll("bodyLevel").map(Number),
+    aromaList : params.getAll("aroma").map(Number),
+    repeatabilityList : params.getAll("repeatability").map(Number),
+    memo : params.get("memo"),
+    tagsList : params.getAll("tags"),
+    notes : params.get("notes")
+  };
+};
+
+//検索条件を元にデータを絞り込む関数
+function filterEntries (searchParams, entries) {
+  const filteredEntries = entries.filter(entry => {
+    if (searchParams.name && !(entry.name ?? "").includes(searchParams.name)) return false;
+    if (searchParams.rating && Number(entry.rating ?? 0) < Number(searchParams.rating)) return false;//指定したrating以上を絞るための条件
+    // if (file && entry.file !== file) return false;
+    if (searchParams.drinkDate && entry.drinkDate !== searchParams.drinkDate) return false;
+    if (searchParams.sweetnessList.length > 0 && !searchParams.sweetnessList.includes(Number(entry.sweetness))) return false;
+    if (searchParams.acidityList.length > 0 && !searchParams.acidityList.includes(Number(entry.acidity))) return false;
+    if (searchParams.umamiList.length > 0 && !searchParams.umamiList.includes(Number(entry.umami))) return false;
+    if (searchParams.bodyLevelList.length > 0 && !searchParams.bodyLevelList.includes(Number(entry.bodyLevel))) return false;
+    if (searchParams.aromaList.length > 0 && !searchParams.aromaList.includes(Number(entry.aroma))) return false;
+    if (searchParams.repeatabilityList.length > 0 && !searchParams.repeatabilityList.includes(Number(entry.repeatability))) return false;
+    if (searchParams.memo && !(entry.memo ?? "").includes(searchParams.memo)) return false;
+    if (searchParams.tagsList.length > 0 && !searchParams.tagsList.every(tag => (entry.tags ?? []).includes(tag))) return false;//AND検索なのでevery、もしOR検索にするならsomeを使う。
+    if (searchParams.notes && !(entry.notes ?? "").includes(searchParams.notes)) return false;
+    return true;
+  });
+  return filteredEntries;
+}
+
+//データと並び順と置き換えるDOM要素を受け取って画面に描画する関数
+function renderList (entries, sortOrder, listEl) {
+    const sortedEntries = sortEntries(entries, sortOrder.value);
+    listEl.innerHTML = sortedEntries.map(renderCard).join("");
+}
+
 //==================================================
 // 画面読み込み時の処理
 //==================================================
@@ -54,6 +136,7 @@ function renderCard(entry) {
 // 検索条件があれば、その条件に合うデータを抽出して表示する。
 document.addEventListener("DOMContentLoaded", () => {
   const listEl = document.querySelector(".card-list");
+  //「絞り込みを解除ボタン」を取得し、URLにパラメータがあれば表示する。
   const clearFilterBtn = document.getElementById("clearFilterBtn");
   if (clearFilterBtn && window.location.search !== "") {
     clearFilterBtn.hidden = false;
@@ -63,12 +146,19 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!listEl) return;
 
   //保存済みデータがあるか確認する
-  const entries = loadEntries()
-    .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0)); // 登録日降順
+  const entries = loadEntries();
   if (entries.length === 0) {
     listEl.innerHTML = `<div class="empty">記録がありません。右上の「追加」から登録してみてください。</div>`;
     return;
   }
+
+  //URLのパラメーターから検索条件を取得し、各変数に代入する。
+  const searchParams = getSearchParams();
+  //変数を元にデータを絞り込む。
+  const filteredEntries = filterEntries(searchParams, entries);
+
+  //並び替えボタンが押されたらデータを並び変える
+  const sortOrder = document.getElementById("sortOrder");
 
   //絞り込み解除ボタンが押されたらパラメータがない状態でindex.htmlに移動する
   clearFilterBtn.addEventListener("click", () => {
@@ -77,58 +167,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //検索ボタンが押されたらURL内のパラメータをそのまま渡す
   const searchMenuBtn = document.getElementById("searchMenuBtn");
-  searchMenuBtn.addEventListener("click", () => {
-    const searchMenuParams = new URLSearchParams(window.location.search);
-    const searchMenuUrl = searchMenuParams.toString()
-      ? `search.html?${searchMenuParams.toString()}`
-      : "search.html";
-    document.getElementById("searchMenuBtn").href = searchMenuUrl;
-  })
+  const searchMenuParams = new URLSearchParams(window.location.search);
+  const searchMenuUrl = searchMenuParams.toString()
+    ? `search.html?${searchMenuParams.toString()}`
+    : "search.html";
+  searchMenuBtn.href = searchMenuUrl;
 
-
-
-  //URLのパラメーターから検索条件を取得し、各変数に代入する。
-  const params = new URLSearchParams(location.search);
-  if (params.size > 0) {
-    const name = params.get("name");
-    const rating = params.get("rating");
-    // const file = params.get("file");
-    const drinkDate = params.get("drinkDate");
-    const sweetnessList = params.getAll("sweetness").map(Number);
-    const acidityList = params.getAll("acidity").map(Number);
-    const umamiList = params.getAll("umami").map(Number);
-    const bodyLevelList = params.getAll("bodyLevel").map(Number);
-    const aromaList = params.getAll("aroma").map(Number);
-    const repeatabilityList = params.getAll("repeatability").map(Number);
-    const memo = params.get("memo");
-    const tagsList = params.getAll("tags");//getAll()するとURLにtagが複数入っていたとしても一つの配列に格納された状態で取得できる。
-    const notes = params.get("notes");
-
-    const filteredEntries = entries.filter(entry => {
-      if (name && !(entry.name ?? "").includes(name)) return false;
-      if (rating && Number(entry.rating ?? 0) < Number(rating)) return false;//指定したrating以上を絞るための条件
-      // if (file && entry.file !== file) return false;
-      if (drinkDate && entry.drinkDate !== drinkDate) return false;
-      if (sweetnessList.length > 0 && !sweetnessList.includes(Number(entry.sweetness))) return false;
-      if (acidityList.length > 0 && !acidityList.includes(Number(entry.acidity))) return false;
-      if (umamiList.length > 0 && !umamiList.includes(Number(entry.umami))) return false;
-      if (bodyLevelList.length > 0 && !bodyLevelList.includes(Number(entry.bodyLevel))) return false;
-      if (aromaList.length > 0 && !aromaList.includes(Number(entry.aroma))) return false;
-      if (repeatabilityList.length > 0 && !repeatabilityList.includes(Number(entry.repeatability))) return false;
-      if (memo && !(entry.memo ?? "").includes(memo)) return false;
-      if (tagsList.length > 0 && !tagsList.every(tag => (entry.tags ?? []).includes(tag))) return false;//AND検索なのでevery、もしOR検索にするならsomeを使う。
-      if (notes && !(entry.notes ?? "").includes(notes)) return false;
-      return true;
-    })
-
-    if (filteredEntries.length === 0) {
-      listEl.innerHTML = `<div class="none">検索条件に合うデータがありません。</div>`;
-      return;
-    }
-
-    listEl.innerHTML = filteredEntries.map(renderCard).join("");
+  if (filteredEntries.length === 0) {
+    listEl.innerHTML = `<div class="none">検索条件に合うデータがありません。</div>`;
     return;
   }
 
-  listEl.innerHTML = entries.map(renderCard).join("");
+  renderList(filteredEntries, sortOrder, listEl);
+  sortOrder.addEventListener("change", () => {
+    renderList(filteredEntries, sortOrder, listEl);
+  });
+
 });

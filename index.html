@@ -20,7 +20,20 @@
         <main>
             <div class="container">
                 <h1>一覧</h1>
-                <button type="button" id="clearFilterBtn" class="clear-filter" hidden>絞り込みを解除</button>
+                <div class="button-group">
+                    <div class="sort-select">
+                        <label for="sortOrder">並び替え</label>
+                        <select id="sortOrder" name="sortOrder">
+                            <option value="createdAt-desc" selected>登録日が新しい順</option>
+                            <option value="createdAt-asc">登録日が古い順</option>
+                            <option value="name-asc">酒名昇順</option>
+                            <option value="name-desc">酒名降順</option>
+                            <option value="rating-desc">お気に入り度が高い順</option>
+                            <option value="rating-asc">お気に入り度が低い順</option>
+                        </select>                        
+                    </div>
+                    <button type="button" id="clearFilterBtn" class="clear-filter" hidden>絞り込みを解除</button>
+                </div>
                 <div class="card-list">
                     <!--ここにindex.jsで生成したhtmlが入る-->
                 </div>
