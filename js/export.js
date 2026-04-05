@@ -1,5 +1,6 @@
 import { setupNavLinks } from "./nav.js";
 import { loadEntries } from "./storage.js";
+import { buildPageUrl } from "./query.js";
 
 // 日時を yyyy/MM/dd HH:mm 形式に変換
 function formatDateTime(value) {
@@ -108,6 +109,12 @@ function makeTimestamp() {
 
 document.addEventListener("DOMContentLoaded", () => {
   const messageEl = document.getElementById("exportMessage");
+  //キャンセルボタンのリンク先を設定
+  const backToListLink = document.getElementById("backToList");
+  if (backToListLink) {
+    const backUrl = buildPageUrl("index.html", window.location.search, {id: null});
+    backToListLink.href = backUrl;
+  }
 
   //ナブバーのリンク先を設定（全画面共通で入れる）
   setupNavLinks();
