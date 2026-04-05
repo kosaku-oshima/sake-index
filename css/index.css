@@ -45,7 +45,7 @@
 
 .button-group {
     display: block;
-    margin-bottom: 50px;
+    margin-bottom: 0.5rem;
     justify-content: end;
 }
 
