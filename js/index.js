@@ -1,4 +1,6 @@
+import { setupNavLinks } from "./nav.js";
 import { loadEntries } from "./storage.js";
+import {getSearchParamsFromUrl, buildPageUrl} from "./query.js";
 
 //文字列sにhtmlタグで使われる文字が入っていたら別の表現に置き換える処理
 //innerHTMLに埋め込んでもタグとして解釈されないようにする安全化
@@ -23,19 +25,12 @@ function renderCard(entry) {
   const rating = "★".repeat(ratingRaw) + "☆".repeat(5 - ratingRaw);
  
   //閲覧編集画面のURLを作成する処理。パラメーターに検索条件があればそこにidを付け加える
-  const currentParams = new URLSearchParams(window.location.search);
-  const detailUrl = new URL("detail.html", window.location.href);
-  detailUrl.searchParams.set("id", entry.id);
-  for (const [key, value] of currentParams.entries()) {
-    if (key !== "id") {
-      detailUrl.searchParams.append(key, value);
-    }
-  }
+  const detailUrl = buildPageUrl("detail.html", window.location.search, { id: entry.id});
 
   //抽出した1つのデータに応じてhtmlを生成し返す。escapeHtml()でタグになりうる文字は別の表現に置き換える。
   return `
   <div class="card">
-    <a href=${detailUrl}>
+    <a href="${detailUrl}">
       <div class="card-title">${escapeHtml(entry.name ?? "")}</div>
       <div class="card-rating">${rating}</div>
       <div class="card-memo">${escapeHtml(entry.memo ?? "")}</div>
@@ -81,25 +76,6 @@ function sortEntries(entries, sortOrder) {
   return copied;
 }
 
-//URLのパラメーターから検索条件を取得し、各変数に代入して返す関数。
-function getSearchParams() {
-  const params = new URLSearchParams(location.search);
-  return {
-    name : params.get("name"),
-    rating : params.get("rating"),
-    drinkDate : params.get("drinkDate"),
-    sweetnessList : params.getAll("sweetness").map(Number),
-    acidityList : params.getAll("acidity").map(Number),
-    umamiList : params.getAll("umami").map(Number),
-    bodyLevelList : params.getAll("bodyLevel").map(Number),
-    aromaList : params.getAll("aroma").map(Number),
-    repeatabilityList : params.getAll("repeatability").map(Number),
-    memo : params.get("memo"),
-    tagsList : params.getAll("tags"),
-    notes : params.get("notes")
-  };
-};
-
 //検索条件を元にデータを絞り込む関数
 function filterEntries (searchParams, entries) {
   const filteredEntries = entries.filter(entry => {
@@ -141,6 +117,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (clearFilterBtn && window.location.search !== "") {
     clearFilterBtn.hidden = false;
   }
+  //ナブバーのリンク先を設定（全画面共通で入れる）
+  setupNavLinks();
 
   //html内にcard-listクラスの要素がなければ処理を終える
   if (!listEl) return;
@@ -153,31 +131,25 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   //URLのパラメーターから検索条件を取得し、各変数に代入する。
-  const searchParams = getSearchParams();
+  // const searchParams = getSearchParams();
+  const searchParams = getSearchParamsFromUrl(window.location.search);
   //変数を元にデータを絞り込む。
   const filteredEntries = filterEntries(searchParams, entries);
 
-  //並び替えボタンが押されたらデータを並び変える
-  const sortOrder = document.getElementById("sortOrder");
-
   //絞り込み解除ボタンが押されたらパラメータがない状態でindex.htmlに移動する
-  clearFilterBtn.addEventListener("click", () => {
-    location.href = "index.html";
-  })
-
-  //検索ボタンが押されたらURL内のパラメータをそのまま渡す
-  const searchMenuBtn = document.getElementById("searchMenuBtn");
-  const searchMenuParams = new URLSearchParams(window.location.search);
-  const searchMenuUrl = searchMenuParams.toString()
-    ? `search.html?${searchMenuParams.toString()}`
-    : "search.html";
-  searchMenuBtn.href = searchMenuUrl;
+  if (clearFilterBtn) {
+    clearFilterBtn.addEventListener("click", () => {
+      location.href = "index.html";
+    }) 
+  }
 
   if (filteredEntries.length === 0) {
     listEl.innerHTML = `<div class="none">検索条件に合うデータがありません。</div>`;
     return;
   }
 
+  //並び替えボタンが押されたらデータを並び変える
+  const sortOrder = document.getElementById("sortOrder");
   renderList(filteredEntries, sortOrder, listEl);
   sortOrder.addEventListener("change", () => {
     renderList(filteredEntries, sortOrder, listEl);

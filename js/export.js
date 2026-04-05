@@ -1,3 +1,4 @@
+import { setupNavLinks } from "./nav.js";
 import { loadEntries } from "./storage.js";
 
 // 日時を yyyy/MM/dd HH:mm 形式に変換
@@ -106,9 +107,12 @@ function makeTimestamp() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const btn = document.getElementById("exportCsvBtn");
   const messageEl = document.getElementById("exportMessage");
 
+  //ナブバーのリンク先を設定（全画面共通で入れる）
+  setupNavLinks();
+
+  const btn = document.getElementById("exportCsvBtn");
   if (!btn) return;
 
   btn.addEventListener("click", () => {

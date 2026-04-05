@@ -1,4 +1,6 @@
+import { setupNavLinks } from "./nav.js";
 import { parseTags } from "./storage.js";
+import { getSearchParamsFromUrl, buildSearchParams, buildPageUrl } from "./query.js";
 
 //お気に入り度の値を取得し、なければnullを返す
 function getRating() {
@@ -43,34 +45,21 @@ function setCheckboxChecked(name, values) {
 
 //編集フォームの初期値をセットする関数
 function fillFormFromParams() {
-  //パラメータ全体を取得
-  const params = new URLSearchParams(location.search);
-  //パラメータから各値を取得
-  const name = params.get("name");
-  const rating = params.get("rating");
-  const drinkDate = params.get("drinkDate");
-  const sweetnessList = params.getAll("sweetness").map(Number);
-  const acidityList = params.getAll("acidity").map(Number);
-  const umamiList = params.getAll("umami").map(Number);
-  const bodyLevelList = params.getAll("bodyLevel").map(Number);
-  const aromaList = params.getAll("aroma").map(Number);
-  const repeatabilityList = params.getAll("repeatability").map(Number);
-  const memo = params.get("memo");
-  const tagsList = params.getAll("tags");//getAll()するとURLにtagが複数入っていたとしても一つの配列に格納された状態で取得できる。
-  const notes = params.get("notes");
+  //URLのパラメータから各値を取得
+  const params = getSearchParamsFromUrl(window.location.search);
   //各値を初期値としてセット
-  setInputValue("name", name);
-  setRadioChecked("rating", rating);
-  setInputValue("drinkDate", drinkDate);
-  setCheckboxChecked("sweetness", sweetnessList);
-  setCheckboxChecked("acidity", acidityList);
-  setCheckboxChecked("umami", umamiList);
-  setCheckboxChecked("bodyLevel", bodyLevelList);
-  setCheckboxChecked("aroma", aromaList);
-  setCheckboxChecked("repeatability", repeatabilityList);
-  setInputValue("memo", memo);
-  setInputValue("tags", tagsList.join(", "));
-  setInputValue("notes", notes);
+  setInputValue("name", params.name);
+  setRadioChecked("rating", params.rating);
+  setInputValue("drinkDate", params.drinkDate);
+  setCheckboxChecked("sweetness", params.sweetnessList);
+  setCheckboxChecked("acidity", params.acidityList);
+  setCheckboxChecked("umami", params.umamiList);
+  setCheckboxChecked("bodyLevel", params.bodyLevelList);
+  setCheckboxChecked("aroma", params.aromaList);
+  setCheckboxChecked("repeatability", params.repeatabilityList);
+  setInputValue("memo", params.memo);
+  setInputValue("tags", params.tagsList.join(", "));
+  setInputValue("notes", params.notes);
 }
 
 //==================================================
@@ -79,14 +68,14 @@ function fillFormFromParams() {
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("searchForm");
     const clearBtn = document.getElementById("clearBtn");
-    const backToListLink = document.getElementById("backToList");
-    //キャンセルリンク押下時の行先を先に確定させておく処理。リンククリック時に行先を操作するとうまくつながらない可能性があるため
-    if (backToListLink) {
-      const backParams = new URLSearchParams(window.location.search);
-      const backUrl = backParams.toString()
-        ? `index.html?${backParams.toString()}`
-        : "index.html";
+
+    //ナブバーのリンク先を設定（全画面共通で入れる）
+    setupNavLinks();
     
+    //キャンセルリンク押下時の行先を先に確定させておく処理。リンククリック時に行先を操作するとうまくつながらない可能性があるため
+    const backToListLink = document.getElementById("backToList");
+    if (backToListLink) {
+      const backUrl = buildPageUrl("index.html", window.location.search, {});
       backToListLink.href = backUrl;
     }
 
@@ -96,11 +85,10 @@ document.addEventListener("DOMContentLoaded", () => {
     //フォーム送信時の処理、各項目の入力値を取得し、無い場合は項目ごとにデフォルト値（基本null）を入れてentryというデータの塊を作る。
     form.addEventListener("submit", (e) => {
         e.preventDefault();
-        const params = new URLSearchParams();
+        // const params = new URLSearchParams();
 
         const name = (document.getElementById("name")?.value ?? null).trim();
         const rating = getRating();
-        // const file = document.querySelector('input[name="file"]:checked')?.value ?? "";
         const drinkDate = document.getElementById("drinkDate")?.value ?? null;
         //チェックボックスで複数選択の項目は選択されたvalueを配列に格納する
         const checkedSweetnessList = getCheckedValues("sweetness");
@@ -117,25 +105,24 @@ document.addEventListener("DOMContentLoaded", () => {
         const tagsList = parseTags(tagsText);
 
         const notes = (document.getElementById("notes")?.value ?? "").trim();
-        
-        if (name !== "") params.set("name", name);
-        if (rating !== null) params.set("rating", rating);
-        // if (file) params.set("file", file);
-        if (drinkDate !== "") params.set("drinkDate", drinkDate);
-        if (checkedSweetnessList.length > 0) checkedSweetnessList.forEach(value => params.append("sweetness", value));
-        if (checkedAcidityList.length > 0) checkedAcidityList.forEach(value => params.append("acidity", value));
-        if (checkedUmamiList.length > 0) checkedUmamiList.forEach(value => params.append("umami", value));
-        if (checkedBodyLevelList.length > 0) checkedBodyLevelList.forEach(value => params.append("bodyLevel", value));
-        if (checkedAromaList.length > 0) checkedAromaList.forEach(value => params.append("aroma", value));
-        if (checkedRepeatabilityList.length > 0) checkedRepeatabilityList.forEach(value => params.append("repeatability", value));
 
-        if (memo !== "") params.set("memo", memo);
-
-        if (tagsList.length > 0) tagsList.forEach(value => params.append("tags", value));
-        
-        if (notes !== "") params.set("notes", notes);
+        const paramsObject = {
+          "name" : name,
+          "rating" : rating,
+          "drinkDate" : drinkDate,
+          "sweetnessList" : checkedSweetnessList,
+          "acidityList" :checkedAcidityList,
+          "umamiList" : checkedUmamiList,
+          "bodyLevelList" : checkedBodyLevelList,
+          "aromaList" : checkedAromaList,
+          "repeatabilityList" : checkedRepeatabilityList,
+          "memo" : memo,
+          "tagsList" : tagsList,
+          "notes" : notes
+        };
 
         //検索条件が入ったパラメーターを渡しつつindex.htmlに戻る
+        const params = buildSearchParams(paramsObject)
         location.href = `index.html?${params.toString()}`;
     })
 

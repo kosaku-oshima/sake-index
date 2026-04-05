@@ -1,9 +1,11 @@
+import { setupNavLinks } from "./nav.js";
 import {
   findEntryById,
   deleteEntryById,
   upsertEntry,
   parseTags
 } from "./storage.js";
+import { buildPageUrl } from "./query.js";
 
 //選択されたデータを取得する関数
 function getIdFromQuery() {
@@ -193,6 +195,16 @@ function fillFormFromEntry(originalEntry) {
   document.getElementById("notes").value = originalEntry.notes ?? "";
 }
 
+//一覧画面に戻る時に使用するURLを作成する関数
+// function createBackURL () {
+//   const backParams = new URLSearchParams(window.location.search);
+//   backParams.delete("id");
+//   const backUrl = backParams.toString()
+//     ? `index.html?${backParams.toString()}`
+//     : "index.html";
+//   return backUrl;
+// }
+
 //==================================================
 // 画面読み込み時の処理
 //==================================================
@@ -204,6 +216,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const cancelEditBtn = document.getElementById("cancelEditBtn");
   const deleteBtn = document.getElementById("deleteBtn");
   const backToListLink = document.getElementById("backToList");
+  if (backToListLink) {
+    const backUrl = buildPageUrl("index.html", window.location.search, {id: null});
+    backToListLink.href = backUrl;
+  }
+
+  //ナブバーのリンク先を設定（全画面共通で入れる）
+  setupNavLinks();
 
   //idがないという異常時の表示
   if (!id) {
@@ -254,18 +273,9 @@ document.addEventListener("DOMContentLoaded", () => {
   deleteBtn.addEventListener("click", () => {
     if (!confirm("この記録を削除します。よろしいですか？")) return;
     deleteEntryById(id);
-    location.href = "index.html";
+    const backUrl = buildPageUrl("index.html", window.location.search, {id: null});
+    location.href = backUrl;
   });
-
-  //一覧に戻るボタン押下時の処理
-  backToListLink.addEventListener("click", () => {
-    const backParams = new URLSearchParams(window.location.search);
-    backParams.delete("id");
-    const backUrl = backParams.toString()
-      ? `index.html?${backParams.toString()}`
-      : "index.html";
-    document.getElementById("backToList").href = backUrl
-  })
 
   //フォーム送信時の処理、各項目の入力値を取得し、無い場合は項目ごとにデフォルト値（""や0など）を入れてentryというデータの塊を作る。
   form.addEventListener("submit", (e) => {
@@ -316,8 +326,10 @@ document.addEventListener("DOMContentLoaded", () => {
       updatedAt: Date.now()//更新日に現在日付をセット
     };
 
-    //実行後index.htmlに戻る処理
+    //データ更新処理
     upsertEntry(updatedEntry);
-    location.href = "index.html";
+    //更新後index.htmlに戻る処理
+    const backUrl = buildPageUrl("index.html", window.location.search, {id : null});
+    location.href = backUrl;
   });
 });
