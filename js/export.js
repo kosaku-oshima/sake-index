@@ -122,18 +122,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("exportCsvBtn");
   if (!btn) return;
 
-  btn.addEventListener("click", () => {
-    const entries = loadEntries();
+  btn.addEventListener("click", async () => {
+    try {
+      const entries = await loadEntries();
 
-    if (!entries.length) {
-      messageEl.textContent = "エクスポートできるデータがありません。";
-      return;
+      if (!entries.length) {
+        if (messageEl) {
+          messageEl.textContent = "エクスポートできるデータがありません。";
+        }
+        return;
+      }
+
+      const csvText = toCsv(entries);
+      const filename = `sake-index-export_${makeTimestamp()}.csv`;
+
+      downloadCsv(filename, csvText);
+
+      if (messageEl) {
+        messageEl.textContent = `${entries.length}件のデータをCSVとして出力しました。`;
+      }
+    } catch (error) {
+      console.error("データのエクスポートに失敗しました", error);
     }
-
-    const csvText = toCsv(entries);
-    const filename = `sake-index-export_${makeTimestamp()}.csv`;
-
-    downloadCsv(filename, csvText);
-    messageEl.textContent = `${entries.length}件のデータをCSVとして出力しました。`;
   });
 });

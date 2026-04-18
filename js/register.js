@@ -1,5 +1,5 @@
 import { setupNavLinks } from "./nav.js";
-import { upsertEntry, uuid, parseTags } from "./storage.js";
+import { upsertEntry, parseTags } from "./storage.js";
 import { buildPageUrl } from "./query.js";
 
 //お気に入り度の値を取得し、なければnullを返す
@@ -38,65 +38,78 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   //フォーム送信時の処理、各項目の入力値を取得し、無い場合は項目ごとにデフォルト値（基本null）を入れてentryというデータの塊を作る。
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    try {
+      const name = (document.getElementById("name")?.value ?? "").trim();
+      const drinkDateRaw = document.getElementById("drinkDate")?.value ?? ""; //データがない場合に必ず""になってしまうようなので、1行使ってnullに変換する
+      const drinkDate = drinkDateRaw === "" ? null : drinkDateRaw;
+      const checkedSweetness = document.querySelector('input[name="sweetness"]:checked');
+      const sweetness = checkedSweetness ? Number(checkedSweetness.value) : null;
+      const checkedAcidity = document.querySelector('input[name="acidity"]:checked');
+      const acidity = checkedAcidity ? Number(checkedAcidity.value) : null;
+      const checkedUmami = document.querySelector('input[name="umami"]:checked');
+      const umami = checkedUmami ? Number(checkedUmami.value) : null;
+      const checkedBodyLevel = document.querySelector('input[name="bodyLevel"]:checked');
+      const bodyLevel = checkedBodyLevel ? Number(checkedBodyLevel.value) : null;
+      const checkedAroma = document.querySelector('input[name="aroma"]:checked');
+      const aroma = checkedAroma ? Number(checkedAroma.value) : null;
+      const checkedRepeatability = document.querySelector('input[name="repeatability"]:checked');
+      const repeatability = checkedRepeatability ? Number(checkedRepeatability.value) : null;
+      const memo = (document.getElementById("memo")?.value ?? "").trim();
+      const tagsText = document.getElementById("tags")?.value ?? "";
+      const notes = (document.getElementById("notes")?.value ?? "").trim();
+      const imageFile = document.getElementById("image")?.files?.[0] ?? null;
+      
 
-    const name = (document.getElementById("name")?.value ?? "").trim();
-    const drinkDateRaw = document.getElementById("drinkDate")?.value ?? ""; //データがない場合に必ず""になってしまうようなので、1行使ってnullに変換する
-    const drinkDate = drinkDateRaw === "" ? null : drinkDateRaw;
-    const checkedSweetness = document.querySelector('input[name="sweetness"]:checked');
-    const sweetness = checkedSweetness ? Number(checkedSweetness.value) : null;
-    const checkedAcidity = document.querySelector('input[name="acidity"]:checked');
-    const acidity = checkedAcidity ? Number(checkedAcidity.value) : null;
-    const checkedUmami = document.querySelector('input[name="umami"]:checked');
-    const umami = checkedUmami ? Number(checkedUmami.value) : null;
-    const checkedBodyLevel = document.querySelector('input[name="bodyLevel"]:checked');
-    const bodyLevel = checkedBodyLevel ? Number(checkedBodyLevel.value) : null;
-    const checkedAroma = document.querySelector('input[name="aroma"]:checked');
-    const aroma = checkedAroma ? Number(checkedAroma.value) : null;
-    const checkedRepeatability = document.querySelector('input[name="repeatability"]:checked');
-    const repeatability = checkedRepeatability ? Number(checkedRepeatability.value) : null;
-    const memo = (document.getElementById("memo")?.value ?? "").trim();
-    const tagsText = document.getElementById("tags")?.value ?? "";
-    const notes = (document.getElementById("notes")?.value ?? "").trim();
-    
+    //入力チェック
+      if (!name) {
+        alert("酒名は入力必須です。");
+        return; //エラーのあとに保存せず止める処理。このreturnがないとエラーが出ているのにデータが保存される。
+      }
+      if (name.length > 50) {
+        alert("酒名は50文字以内で入力してください。")
+        return;
+      }
+      if (notes.length > 200) {
+        alert("備考は200文字以内で入力してください。")
+        return;
+      }
+      if (imageFile && imageFile.size > 5 * 1024 * 1024) {
+        alert("画像は5MB以下にしてください。");
+        return;
+      }
 
-  //入力チェック
-    if (!name) {
-      alert("酒名は入力必須です。");
-      return; //エラーのあとに保存せず止める処理。このreturnがないとエラーが出ているのにデータが保存される。
+      //id,createdAt,updatedAtはstorage.js内のupsertEntry()関数で入れるのでここでは入れない。
+      const entry = {
+        name,
+        rating: getRating(),
+        drinkDate,   // 任意（今日が初期）
+        sweetness,
+        acidity,
+        umami,
+        bodyLevel,
+        aroma,
+        repeatability,
+        memo,
+        tags: parseTags(tagsText),
+        notes,
+        image: imageFile ? {
+          blob: imageFile,
+          name: imageFile.name,
+          type: imageFile.type,
+          size: imageFile.size
+        } : null,
+      };
+
+      //登録処理。storage.jsの非同期処理を使うのでawaitを付ける。
+      await upsertEntry(entry);
+      //登録後index.htmlに戻る処理
+      const backUrl = buildPageUrl("index.html", window.location.search, {});
+      location.href = backUrl;
+    } catch (error) {
+      console.error("フォームの送信に失敗しました", error);
+      alert("保存に失敗しました。コンソールを確認してください。");
     }
-    if (name.length > 50) {
-      alert("酒名は50文字以内で入力してください。")
-      return;
-    }
-    if (notes.length > 200) {
-      alert("備考は200文字以内で入力してください。")
-      return;
-    }
-
-    const entry = {
-      id: uuid(),
-      name,
-      rating: getRating(),
-      drinkDate,   // 任意（今日が初期）
-      sweetness,
-      acidity,
-      umami,
-      bodyLevel,
-      aroma,
-      repeatability,
-      memo,
-      tags: parseTags(tagsText),
-      notes,
-      createdAt: Date.now(), // ソート用（登録日時）
-      updatedAt: ""//新規登録時は空欄
-    };
-
-    //登録処理
-    upsertEntry(entry);
-    //登録後index.htmlに戻る処理
-    const backUrl = buildPageUrl("index.html", window.location.search, {});
-    location.href = backUrl;
   });
 });

@@ -110,49 +110,52 @@ function renderList (entries, sortOrder, listEl) {
 // 登録日降順に並べ替え、各要素を renderCard() でHTML文字列に変換して連結し、listEl.innerHTML に代入して一覧を表示する。
 // データが0件なら空表示メッセージを入れる。
 // 検索条件があれば、その条件に合うデータを抽出して表示する。
-document.addEventListener("DOMContentLoaded", () => {
-  const listEl = document.querySelector(".card-list");
-  //「絞り込みを解除ボタン」を取得し、URLにパラメータがあれば表示する。
-  const clearFilterBtn = document.getElementById("clearFilterBtn");
-  if (clearFilterBtn && window.location.search !== "") {
-    clearFilterBtn.hidden = false;
-  }
-  //ナブバーのリンク先を設定（全画面共通で入れる）
-  setupNavLinks();
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const listEl = document.querySelector(".card-list");
 
-  //html内にcard-listクラスの要素がなければ処理を終える
-  if (!listEl) return;
+    const clearFilterBtn = document.getElementById("clearFilterBtn");
+    if (clearFilterBtn && window.location.search !== "") {
+      clearFilterBtn.hidden = false;
+    }
 
-  //保存済みデータがあるか確認する
-  const entries = loadEntries();
-  if (entries.length === 0) {
-    listEl.innerHTML = `<div class="empty">記録がありません。右上の「追加」から登録してみてください。</div>`;
-    return;
-  }
+    //ナブバーのリンク先を設定（全画面共通で入れる）
+    setupNavLinks();
 
-  //URLのパラメーターから検索条件を取得し、各変数に代入する。
-  // const searchParams = getSearchParams();
-  const searchParams = getSearchParamsFromUrl(window.location.search);
-  //変数を元にデータを絞り込む。
-  const filteredEntries = filterEntries(searchParams, entries);
+    //html内にcard-listクラスの要素がなければ処理を終える
+    if (!listEl) return;
 
-  //絞り込み解除ボタンが押されたらパラメータがない状態でindex.htmlに移動する
-  if (clearFilterBtn) {
-    clearFilterBtn.addEventListener("click", () => {
-      location.href = "index.html";
-    }) 
-  }
+    //保存済みデータがあるか確認する。storage.js内の非同期処理を使うのでawaitを付ける。
+    const entries = await loadEntries();
+    if (entries.length === 0) {
+      listEl.innerHTML = `<div class="empty">記録がありません。右上の「追加」から登録してみてください。</div>`;
+      return;
+    }
 
-  if (filteredEntries.length === 0) {
-    listEl.innerHTML = `<div class="none">検索条件に合うデータがありません。</div>`;
-    return;
-  }
+    //URLのパラメーターから検索条件を取得し、各変数に代入する。
+    const searchParams = getSearchParamsFromUrl(window.location.search);
+    //変数を元にデータを絞り込む。
+    const filteredEntries = filterEntries(searchParams, entries);
 
-  //並び替えボタンが押されたらデータを並び変える
-  const sortOrder = document.getElementById("sortOrder");
-  renderList(filteredEntries, sortOrder, listEl);
-  sortOrder.addEventListener("change", () => {
+    //絞り込み解除ボタンが押されたらパラメータがない状態でindex.htmlに移動する
+    if (clearFilterBtn) {
+      clearFilterBtn.addEventListener("click", () => {
+        location.href = "index.html";
+      });
+    }
+
+    if (filteredEntries.length === 0) {
+      listEl.innerHTML = `<div class="none">検索条件に合うデータがありません。</div>`;
+      return;
+    }
+
+    //並び替えボタンが押されたらデータを並び変える
+    const sortOrder = document.getElementById("sortOrder");
     renderList(filteredEntries, sortOrder, listEl);
-  });
-
+    sortOrder.addEventListener("change", () => {
+      renderList(filteredEntries, sortOrder, listEl);
+    });
+  } catch (error) {
+    console.error("一覧の読み込みに失敗しました", error);
+  }
 });
