@@ -1,6 +1,8 @@
 import { setupNavLinks } from "./nav.js";
 import { loadEntries } from "./storage.js";
 import {getSearchParamsFromUrl, buildPageUrl} from "./query.js";
+// 一覧表示している画像のURLを格納する配列。毎回再描画時にリセットする想定。
+const objectUrls = [];
 
 //文字列sにhtmlタグで使われる文字が入っていたら別の表現に置き換える処理
 //innerHTMLに埋め込んでもタグとして解釈されないようにする安全化
@@ -20,6 +22,7 @@ function renderCard(entry) {
   //(2)slice(0, 3) で 最大3つに制限
   //(3)map で <span> に変換
   //(4)join("") で 連結して1つの文字列にする
+  //escapeHtml()でタグになりうる文字は別の表現に置き換える。
   const tags = (entry.tags ?? []).slice(0, 3).map(t => `<span class="tag">#${escapeHtml(t)}</span>`).join("");
   const ratingRaw = entry.rating ?? 0
   const rating = "★".repeat(ratingRaw) + "☆".repeat(5 - ratingRaw);
@@ -27,7 +30,23 @@ function renderCard(entry) {
   //閲覧編集画面のURLを作成する処理。パラメーターに検索条件があればそこにidを付け加える
   const detailUrl = buildPageUrl("detail.html", window.location.search, { id: entry.id});
 
-  //抽出した1つのデータに応じてhtmlを生成し返す。escapeHtml()でタグになりうる文字は別の表現に置き換える。
+  //抽出した1つのデータに応じてhtmlを生成し返す。画像があるときだけは画像のプレビューを追加する。
+  let imageHtml = "";
+  if (entry.image?.blob) {
+    const imageUrl = URL.createObjectURL(entry.image.blob);
+    //画像のURLを配列にためておく。画面再描画時にURLを削除するため。
+    objectUrls.push(imageUrl);
+    imageHtml = `
+      <div class="card-image-wrap">
+        <img
+          src="${imageUrl}"
+          alt="${escapeHtml(entry.name ?? "")} の写真"
+          class="card-image-preview"
+        >
+      </div>
+    `;
+  }
+
   return `
   <div class="card">
     <a href="${detailUrl}">
@@ -35,8 +54,9 @@ function renderCard(entry) {
       <div class="card-rating">${rating}</div>
       <div class="card-memo">${escapeHtml(entry.memo ?? "")}</div>
       <div class="card-tags">${tags}</div>
+      ${imageHtml}
     </a>
-  </div>  
+  </div>
   `;
 }
 
@@ -97,10 +117,12 @@ function filterEntries (searchParams, entries) {
   return filteredEntries;
 }
 
-//データと並び順と置き換えるDOM要素を受け取って画面に描画する関数
+//データと並び順と置き換えるDOM要素を受け取って画面に描画する関数。プレビュー表示に使う画像URLのリセットもここで行う。
 function renderList (entries, sortOrder, listEl) {
-    const sortedEntries = sortEntries(entries, sortOrder.value);
-    listEl.innerHTML = sortedEntries.map(renderCard).join("");
+  objectUrls.forEach(url => URL.revokeObjectURL(url));
+  objectUrls.length = 0;
+  const sortedEntries = sortEntries(entries, sortOrder.value);
+  listEl.innerHTML = sortedEntries.map(renderCard).join("");
 }
 
 //==================================================
@@ -158,4 +180,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch (error) {
     console.error("一覧の読み込みに失敗しました", error);
   }
+});
+
+// 画像プレビュー表示に使ったURLを削除する。
+// renderList() の再描画時に加えて、画面を離れる直前にも念のため解放する。
+window.addEventListener("beforeunload", () => {
+  objectUrls.forEach(url => URL.revokeObjectURL(url));
+  objectUrls.length = 0;
 });
