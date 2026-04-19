@@ -184,9 +184,29 @@
                         <label for="notes">備考</label>
                         <textarea id="notes" name="notes" maxlength="200" rows="5" placeholder="その他特徴、飲んだ場面など"></textarea>
                     </div>
-                    <div class="form-group">
-                        <label for="image">写真</label>
-                        <input type="file" id="image" name="image" accept="image/*">
+                    <div id="imageSection">
+                        <div class="image-preview-wrap" id="imagePreviewWrap" hidden>
+                            <img id="imagePreview" alt="添付画像" hidden>
+                        </div>
+                        
+                        <div class="edit-mode" id="imageEditControls">
+                            <div class="image-edit-row">
+                            <div class="icon-explain">
+                                <p>写真を添付（1枚のみ）</p>
+                            </div>
+                            <button type="button" id="imageSelectBtn" class="icon-btn" aria-label="画像を選択">
+                                <img src="images/photo-icon.png" class="icon-img">
+                            </button>
+                            <input type="file" id="image" accept="image/*" hidden>
+                            <button type="button" id="imageDeleteBtn" class="icon-btn" aria-label="画像を削除">
+                                <img src="images/trash-icon.png" alt="画像を削除" class="icon-img">
+                            </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="imageModal" class="image-modal hidden">
+                        <button type="button" id="imageModalClose" class="image-modal-close" aria-label="閉じる">×</button>
+                        <img id="imageModalPreview" alt="拡大画像">
                     </div>
                     <button type="submit">送信</button>
                 </form>

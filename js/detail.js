@@ -312,6 +312,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     fillViewFromEntry(originalEntry);
     fillFormFromEntry(originalEntry);
     fillImageFromEntry(originalEntry);
+
+    //画像のプレビューモーダルを展開できるようにする
     setupImageModal();
 
     //編集ボタン押下時の処理
@@ -324,29 +326,37 @@ document.addEventListener("DOMContentLoaded", async () => {
       imageInput.addEventListener("change", () => {
         const imageEl = document.getElementById("imagePreview");
         const previewWrap = document.getElementById("imagePreviewWrap");
-        const imageSection = document.getElementById("imageSection");
         const imageFile = imageInput.files?.[0] ?? null;
     
-        if (!imageEl || !previewWrap || !imageSection) return;
+        if (!imageEl || !previewWrap) return;
     
+        if (!imageFile) {
+          return;
+        }
+    
+        if (!imageFile.type.startsWith("image/")) {
+          alert("画像ファイルを選択してください。");
+          imageInput.value = "";
+          return;
+        }
+    
+        if (imageFile.size > 5 * 1024 * 1024) {
+          alert("画像は5MB以下にしてください。");
+          imageInput.value = "";
+          return;
+        }
+    
+        //プレビュー画像のURLをリセットする処理。新しい画像として、規定サイズ以下の画像ファイルが上げられたあとに古いURLをリセットする。
         if (currentImageUrl) {
           URL.revokeObjectURL(currentImageUrl);
           currentImageUrl = null;
         }
     
-        if (imageFile) {
-          currentImageUrl = URL.createObjectURL(imageFile);
-          imageEl.src = currentImageUrl;
-          imageEl.hidden = false;
-          previewWrap.hidden = false;
-          imageSection.hidden = false;
-          isImageDeleted = false;
-        } else {
-          imageEl.hidden = true;
-          imageEl.removeAttribute("src");
-          previewWrap.hidden = true;
-          imageSection.hidden = true;
-        }
+        currentImageUrl = URL.createObjectURL(imageFile);
+        imageEl.src = currentImageUrl;
+        imageEl.hidden = false;
+        previewWrap.hidden = false;
+        isImageDeleted = false;
       });
     }
 
@@ -360,34 +370,35 @@ document.addEventListener("DOMContentLoaded", async () => {
     //画像削除ボタン押下時の処理
     if (imageDeleteBtn) {
       imageDeleteBtn.addEventListener("click", () => {
-        if (confirm("写真をクリアします。よろしいですか？")) {
-          // OKを押した時の処理（メッセージを表示）
-          alert("クリアしました。このまま更新を押すと写真データが削除されます。");
-        } else {
-          // キャンセルを押した時の処理
+        const imageEl = document.getElementById("imagePreview");
+        const previewWrap = document.getElementById("imagePreviewWrap");
+    
+        //現在画面上に削除対象の画像がない場合
+        if (!imageEl || !previewWrap || previewWrap.hidden || !imageEl.src) {
+          alert("写真がアップロードされていません。");
           return;
         }
+    
+        //画面上に画像がある場合
+        if (!confirm("写真をクリアします。よろしいですか？")) {
+          return;
+        }
+    
+        alert("クリアしました。このまま更新を押すと写真データが削除されます。");
         isImageDeleted = true;
     
         if (imageInput) {
           imageInput.value = "";
         }
     
-        const imageEl = document.getElementById("imagePreview");
-        const previewWrap = document.getElementById("imagePreviewWrap");
-    
-        if (imageEl) {
-          if (currentImageUrl) {
-            URL.revokeObjectURL(currentImageUrl);
-            currentImageUrl = null;
-          }
-          imageEl.hidden = true;
-          imageEl.removeAttribute("src");
+        if (currentImageUrl) {
+          URL.revokeObjectURL(currentImageUrl);
+          currentImageUrl = null;
         }
     
-        if (previewWrap) {
-          previewWrap.hidden = true;
-        }
+        imageEl.hidden = true;
+        imageEl.removeAttribute("src");
+        previewWrap.hidden = true;
       });
     }
 
@@ -463,8 +474,13 @@ document.addEventListener("DOMContentLoaded", async () => {
           notes,
         };
 
-        //画像添付があればデータに足す
+        //画像添付があればデータに足す。入力チェックも行う。
         if (imageFile) {
+          if (!imageFile.type.startsWith("image/")) {
+            alert("画像ファイルを選択してください。");
+            return;
+          }
+        
           if (imageFile.size > 5 * 1024 * 1024) {
             alert("画像は5MB以下にしてください。");
             return;

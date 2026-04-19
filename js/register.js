@@ -8,6 +8,37 @@ function getRating() {
   return checked ? Number(checked.value) : null;
 }
 
+//写真プレビュー用のモーダル
+function setupImageModal() {
+  const preview = document.getElementById("imagePreview");
+  const modal = document.getElementById("imageModal");
+  const modalPreview = document.getElementById("imageModalPreview");
+  const closeBtn = document.getElementById("imageModalClose");
+
+  if (!preview || !modal || !modalPreview || !closeBtn) return;
+
+  preview.addEventListener("click", () => {
+    if (!preview.src || preview.hidden) return;
+    modalPreview.src = preview.src;
+    modal.classList.remove("hidden");
+  });
+
+  closeBtn.addEventListener("click", () => {
+    modal.classList.add("hidden");
+    modalPreview.removeAttribute("src");
+  });
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+      modalPreview.removeAttribute("src");
+    }
+  });
+}
+
+//画像のプレビュー表示を制御するために使う変数
+let currentImageUrl = null;
+
 //==================================================
 // 画面読み込み時の処理
 //==================================================
@@ -35,6 +66,95 @@ document.addEventListener("DOMContentLoaded", () => {
     const mm = String(today.getMonth() + 1).padStart(2, "0");
     const dd = String(today.getDate()).padStart(2, "0");
     dateInput.value = `${yyyy}-${mm}-${dd}`;
+  }
+
+  //画像周りの要素を取得
+  const imageInput = document.getElementById("image");
+  const imageSelectBtn = document.getElementById("imageSelectBtn");
+  const imageDeleteBtn = document.getElementById("imageDeleteBtn");
+
+  //画像のプレビューモーダルを展開できるようにする
+  setupImageModal();
+
+  //画像選択時の処理
+  if (imageInput) {
+    imageInput.addEventListener("change", () => {
+      const imageEl = document.getElementById("imagePreview");
+      const previewWrap = document.getElementById("imagePreviewWrap");
+      const imageFile = imageInput.files?.[0] ?? null;
+  
+      if (!imageEl || !previewWrap) return;
+  
+      if (currentImageUrl) {
+        URL.revokeObjectURL(currentImageUrl);
+        currentImageUrl = null;
+      }
+  
+      if (!imageFile) {
+        imageEl.hidden = true;
+        imageEl.removeAttribute("src");
+        previewWrap.hidden = true;
+        return;
+      }
+  
+      // 画像ファイルかチェック
+      if (!imageFile.type.startsWith("image/")) {
+        alert("画像ファイルを選択してください。");
+        imageInput.value = "";
+        imageEl.hidden = true;
+        imageEl.removeAttribute("src");
+        previewWrap.hidden = true;
+        return;
+      }
+  
+      // サイズチェック
+      if (imageFile.size > 5 * 1024 * 1024) {
+        alert("画像は5MB以下にしてください。");
+        imageInput.value = "";
+        imageEl.hidden = true;
+        imageEl.removeAttribute("src");
+        previewWrap.hidden = true;
+        return;
+      }
+  
+      currentImageUrl = URL.createObjectURL(imageFile);
+      imageEl.src = currentImageUrl;
+      imageEl.hidden = false;
+      previewWrap.hidden = false;
+    });
+  }
+
+  //画像アイコン押下時の処理
+  if (imageInput && imageSelectBtn) {
+    imageSelectBtn.addEventListener("click", () => {
+      imageInput.click();
+    });
+  }
+
+  //画像削除ボタン押下時の処理
+  if (imageDeleteBtn) {
+    imageDeleteBtn.addEventListener("click", () => {
+  
+      if (imageInput) {
+        imageInput.value = "";
+      }
+  
+      const imageEl = document.getElementById("imagePreview");
+      const previewWrap = document.getElementById("imagePreviewWrap");
+  
+      if (imageEl) {
+        if (currentImageUrl) {
+          URL.revokeObjectURL(currentImageUrl);
+          currentImageUrl = null;
+        }
+        imageEl.hidden = true;
+        imageEl.removeAttribute("src");
+      }
+  
+      if (previewWrap) {
+        previewWrap.hidden = true;
+      }
+    });
   }
 
   //フォーム送信時の処理、各項目の入力値を取得し、無い場合は項目ごとにデフォルト値（基本null）を入れてentryというデータの塊を作る。
@@ -75,6 +195,10 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("備考は200文字以内で入力してください。")
         return;
       }
+      if (imageFile && !imageFile.type.startsWith("image/")) {
+        alert("画像ファイルを選択してください。");
+        return;
+      }
       if (imageFile && imageFile.size > 5 * 1024 * 1024) {
         alert("画像は5MB以下にしてください。");
         return;
@@ -112,4 +236,11 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("保存に失敗しました。コンソールを確認してください。");
     }
   });
+});
+
+window.addEventListener("beforeunload", () => {
+  if (currentImageUrl) {
+    URL.revokeObjectURL(currentImageUrl);
+    currentImageUrl = null;
+  }
 });
