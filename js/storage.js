@@ -167,21 +167,17 @@ export async function saveEntry(entry) {
     // put は「同じキーがあれば上書き、なければ新規追加」
     const request = store.put(entry);
 
-    // request 自体が成功したとき
-    request.onsuccess = () => {
-      // 保存した entry をそのまま返す
-      resolve(entry);
-    };
-
     // request 自体が失敗したとき
     request.onerror = () => {
       reject(request.error);
+      db.close();
     };
 
     // transaction 全体が完了したとき
     // 書き込み系は request 成功だけでなく
     // transaction 完了まで見てから DB を閉じると安全
     tx.oncomplete = () => {
+      resolve(entry);
       db.close();
     };
 
@@ -190,9 +186,13 @@ export async function saveEntry(entry) {
       reject(tx.error);
       db.close();
     };
+
+    tx.onabort = () => {
+      reject(tx.error ?? new Error("保存処理が中断されました。"));
+      db.close();
+    };
   });
 }
-
 
 /**
  * 新規登録・更新をまとめて行う
