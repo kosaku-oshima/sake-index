@@ -238,32 +238,32 @@ export async function upsertEntry(entry) {
  * 1件削除する
  */
 export async function deleteEntry(id) {
-  // 削除なので readwrite
   const { db, tx, store } = await getStore("readwrite");
 
   return new Promise((resolve, reject) => {
     // 指定 id のデータを削除
     const request = store.delete(id);
 
-    // 削除成功時
-    request.onsuccess = () => {
-      // 特に返す値はないので resolve() だけでよい
-      resolve();
-    };
-
     // request 単体の失敗
     request.onerror = () => {
       reject(request.error);
+      db.close();
     };
 
     // transaction 完了時に DB を閉じる
     tx.oncomplete = () => {
+      resolve();
       db.close();
     };
 
     // transaction 全体の失敗
     tx.onerror = () => {
       reject(tx.error);
+      db.close();
+    };
+
+    tx.onabort = () => {
+      reject(tx.error ?? new Error("削除処理が中断されました。"));
       db.close();
     };
   });
