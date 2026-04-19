@@ -31,6 +31,52 @@ function escapeCsv(value) {
   return str;
 }
 
+//ラジオボタンの項目の値とラベルの対応表
+const radioLabelMap = {
+  sweetness: {
+    [-2]: "甘い",
+    [-1]: "やや甘い",
+    0: "中間",
+    1: "やや辛い",
+    2: "辛い"
+  },
+  acidity: {
+    0: "なし",
+    1: "やや酸味あり",
+    2: "酸味あり",
+  },
+  umami: {
+    [-2]: "すっきり",
+    [-1]: "ややすっきり",
+    0: "中間",
+    1: "やや旨みあり",
+    2: "旨みが強い"
+  },
+  bodyLevel: {
+    [-2]: "軽い",
+    [-1]: "やや軽い",
+    0: "中間",
+    1: "やや重い",
+    2: "重い"
+  },
+  aroma: {
+    0: "穏やか",
+    1: "やや華やか",
+    2: "華やか"
+  },
+  repeatability: {
+    1: "また飲みたい",
+    0: "普通",
+    [-1]: "あまり好みではない"
+  }
+};
+
+//値を元に対応するラベルを取得する関数
+function getRadioLabel(fieldName, value) {
+  if (value === null || value === undefined || value === "") return "";
+  return radioLabelMap[fieldName]?.[Number(value)] ?? "";
+}
+
 // entries配列をCSV文字列に変換する
 function toCsv(entries) {
   const header = [
@@ -38,12 +84,20 @@ function toCsv(entries) {
     "name",
     "rating",
     "drinkDate",
+
     "sweetness",
+    "sweetnessLabel",
     "acidity",
+    "acidityLabel",
     "umami",
+    "umamiLabel",
     "bodyLevel",
+    "bodyLevelLabel",
     "aroma",
+    "aromaLabel",
     "repeatability",
+    "repeatabilityLabel",
+
     "memo",
     "tags",
     "notes",
@@ -56,12 +110,25 @@ function toCsv(entries) {
     entry.name,
     entry.rating,
     entry.drinkDate,
+
     entry.sweetness,
+    getRadioLabel("sweetness", entry.sweetness),
+
     entry.acidity,
+    getRadioLabel("acidity", entry.acidity),
+
     entry.umami,
+    getRadioLabel("umami", entry.umami),
+
     entry.bodyLevel,
+    getRadioLabel("bodyLevel", entry.bodyLevel),
+
     entry.aroma,
+    getRadioLabel("aroma", entry.aroma),
+
     entry.repeatability,
+    getRadioLabel("repeatability", entry.repeatability),
+
     entry.memo,
     (entry.tags ?? []).join("|"),
     entry.notes,
