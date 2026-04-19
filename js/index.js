@@ -118,10 +118,17 @@ function filterEntries (searchParams, entries) {
 }
 
 //データと並び順と置き換えるDOM要素を受け取って画面に描画する関数。プレビュー表示に使う画像URLのリセットもここで行う。
-function renderList (entries, sortOrder, listEl) {
+function renderList(entries, sortOrder, listEl, resultCount) {
   objectUrls.forEach(url => URL.revokeObjectURL(url));
   objectUrls.length = 0;
+
   const sortedEntries = sortEntries(entries, sortOrder.value);
+
+  //一覧表示するデータの件数をセットする
+  if (resultCount) {
+    resultCount.textContent = `${sortedEntries.length}件`;
+  }
+
   listEl.innerHTML = sortedEntries.map(renderCard).join("");
 }
 
@@ -158,6 +165,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const searchParams = getSearchParamsFromUrl(window.location.search);
     //変数を元にデータを絞り込む。
     const filteredEntries = filterEntries(searchParams, entries);
+    //一覧表示している件数を表示する要素の取得。
+    const resultCount = document.getElementById("resultCount");
 
     //絞り込み解除ボタンが押されたらパラメータがない状態でindex.htmlに移動する
     if (clearFilterBtn) {
@@ -173,9 +182,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     //並び替えボタンが押されたらデータを並び変える
     const sortOrder = document.getElementById("sortOrder");
-    renderList(filteredEntries, sortOrder, listEl);
+    
+    renderList(filteredEntries, sortOrder, listEl, resultCount);
     sortOrder.addEventListener("change", () => {
-      renderList(filteredEntries, sortOrder, listEl);
+      renderList(filteredEntries, sortOrder, listEl, resultCount);
     });
   } catch (error) {
     console.error("一覧の読み込みに失敗しました", error);
