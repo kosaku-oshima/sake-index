@@ -118,11 +118,11 @@ function filterEntries (searchParams, entries) {
 }
 
 //データと並び順と置き換えるDOM要素を受け取って画面に描画する関数。プレビュー表示に使う画像URLのリセットもここで行う。
-function renderList(entries, sortOrder, listEl, resultCount) {
+function renderList(entries, sortValue, listEl, resultCount) {
   objectUrls.forEach(url => URL.revokeObjectURL(url));
   objectUrls.length = 0;
 
-  const sortedEntries = sortEntries(entries, sortOrder.value);
+  const sortedEntries = sortEntries(entries, sortValue);
 
   //一覧表示するデータの件数をセットする
   if (resultCount) {
@@ -131,6 +131,7 @@ function renderList(entries, sortOrder, listEl, resultCount) {
 
   listEl.innerHTML = sortedEntries.map(renderCard).join("");
 }
+
 
 //==================================================
 // 画面読み込み時の処理
@@ -180,12 +181,40 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    //並び替えボタンが押されたらデータを並び変える
+    //並び替えボタンが押されたらデータを並び変える    
+    // URLのsortパラメータを初期値として反映する。
+    // パラメータがなければ既定値は登録日が新しい順。
     const sortOrder = document.getElementById("sortOrder");
-    
-    renderList(filteredEntries, sortOrder, listEl, resultCount);
+    if (!sortOrder) return;
+
+    const allowedSortValues = [
+      "createdAt-asc",
+      "createdAt-desc",
+      "name-asc",
+      "name-desc",
+      "rating-asc",
+      "rating-desc",
+    ];
+
+    const sortFromUrl = new URLSearchParams(window.location.search).get("sort");
+    sortOrder.value = allowedSortValues.includes(sortFromUrl)
+      ? sortFromUrl
+      : "createdAt-desc";
+
+    //データを一覧表示
+    renderList(filteredEntries, sortOrder.value, listEl, resultCount);
+
     sortOrder.addEventListener("change", () => {
-      renderList(filteredEntries, sortOrder, listEl, resultCount);
+      const params = new URLSearchParams(window.location.search);
+      params.set("sort", sortOrder.value);
+    
+      history.replaceState(
+        null,
+        "",
+        `${window.location.pathname}?${params.toString()}`
+      );
+    
+      renderList(filteredEntries, sortOrder.value, listEl, resultCount);
     });
   } catch (error) {
     console.error("一覧の読み込みに失敗しました", error);
